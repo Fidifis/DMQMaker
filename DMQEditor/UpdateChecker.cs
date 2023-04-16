@@ -12,16 +12,15 @@ namespace DMQEditor
         public static async void CheckForUpdateAsync(bool forced = false)
         {
             Log.Information("Checking updates");
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
 
-            if (fvi.FileVersion == null)
+            var v = Assembly.GetExecutingAssembly().GetName().Version;
+            if (v == null)
             {
                 Log.Error("Failed to get assembly version");
                 return;
             }
 
-            string version = "v" + TrimToThreeDigitVersion(fvi.FileVersion);
+            string version = "v" + TrimToThreeDigitVersion(v.ToString());
             string content;
 
             try
