@@ -14,7 +14,7 @@
         </Grid>
 
         <Grid Margin="0,44,0,79" HorizontalAlignment="Right" Width="327">
-            <TextBox x:Name="InputText" Text="Sample text" Height="100" VerticalAlignment="Top" Margin="0,0,10,0" Width="NaN" TextChanged="InputText_Changed"/>
+            <TextBox x:Name="InputText" Text="Sample text" Height="100" VerticalAlignment="Top" Margin="0,0,10,0" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" TextChanged="InputText_Changed"/>
             <Button x:Name="SaveBtn" Content="Save" Margin="193,125,0,0" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100" Click="SaveBtn_Click"/>
             <Button x:Name="OpenBtn" Content="Open" Margin="47,125,0,0" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100" Click="OpenBtn_Click"/>
             <Button x:Name="RefreshBtn" Content="Refresh" Margin="122,181,0,0" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100" Click="RefreshBtn_Click"/>
