@@ -46,6 +46,12 @@ namespace DMQEditor
             InitializeComponent();
         }
 
+        private void WindowLoaded(object sender, RoutedEventArgs e)
+        {
+            Log.Verbose("MainWindow Loaded");
+            UpdateCheck.CheckForUpdateAsync();
+        }
+
         static void CreateLogger(byte verbosity = 1)
         {
             var logConfig = new LoggerConfiguration()

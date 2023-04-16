@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DMQEditor"
         mc:Ignorable="d"
-        Title="DMQ Maker - editor" Height="651" Width="898">
+        Title="DMQ Maker - editor" Height="651" Width="898" Loaded="WindowLoaded">
     <Grid>
         <Grid Margin="37,44,0,0" HorizontalAlignment="Left" Width="512" Height="512" VerticalAlignment="Top">
             <Border BorderThickness="2" BorderBrush="Black"/>
