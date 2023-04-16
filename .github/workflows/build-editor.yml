@@ -1,0 +1,40 @@
+name: Main
+
+on:
+  push:
+    tags:
+    - 'v*'
+      
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+      
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build Release
+      run: dotnet publish -c 'Release' -r 'win-x64'
+      
+    - name: Build Standalone
+      run: dotnet publish -c 'Standalone' -r 'win-x64'
+      
+    - name: Rename files
+      run: |
+        cp .\DMQEditor\bin\Release\net7.0-windows\win-x64\publish\DMQEditor.exe DMQEditor-x64.exe
+        cp .\DMQEditor\bin\Standalone\net7.0-windows\win-x64\publish\DMQEditor.exe DMQEditor-x64-Standalone.exe
+      
+    - name: Release
+      uses: softprops/action-gh-release@v0.1.15
+      with:
+        files: |
+          DMQEditor-x64.exe
+          DMQEditor-x64-Standalone.exe

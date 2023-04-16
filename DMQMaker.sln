@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33530.505
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DMQEditor", "DMQEditor\DMQEditor.csproj", "{D3939C8D-CD6A-411E-B50C-C299936D897D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DMQCore", "DMQCore\DMQCore.csproj", "{677C6734-A21A-4FFE-BD7B-C8695CC0A95E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Standalone|Any CPU = Standalone|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D3939C8D-CD6A-411E-B50C-C299936D897D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3939C8D-CD6A-411E-B50C-C299936D897D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3939C8D-CD6A-411E-B50C-C299936D897D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3939C8D-CD6A-411E-B50C-C299936D897D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3939C8D-CD6A-411E-B50C-C299936D897D}.Standalone|Any CPU.ActiveCfg = Standalone|Any CPU
+		{D3939C8D-CD6A-411E-B50C-C299936D897D}.Standalone|Any CPU.Build.0 = Standalone|Any CPU
+		{677C6734-A21A-4FFE-BD7B-C8695CC0A95E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{677C6734-A21A-4FFE-BD7B-C8695CC0A95E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{677C6734-A21A-4FFE-BD7B-C8695CC0A95E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{677C6734-A21A-4FFE-BD7B-C8695CC0A95E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{677C6734-A21A-4FFE-BD7B-C8695CC0A95E}.Standalone|Any CPU.ActiveCfg = Release|Any CPU
+		{677C6734-A21A-4FFE-BD7B-C8695CC0A95E}.Standalone|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E0162AF0-536E-4896-BE84-6B0BC2061DFD}
+	EndGlobalSection
+EndGlobal
