@@ -5,19 +5,49 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DMQEditor"
         mc:Ignorable="d"
-        Title="DMQ Maker - editor" Height="651" Width="898" Loaded="WindowLoaded">
+        Title="DMQ Maker - editor" Height="761" Width="1039" Loaded="WindowLoaded">
     <Grid>
-        <Grid Margin="37,44,0,0" HorizontalAlignment="Left" Width="512" Height="512" VerticalAlignment="Top">
-            <Border BorderThickness="2" BorderBrush="Black"/>
-            <Label x:Name="NoImageLabel" Visibility="Visible" Content="No Image" FontSize="36" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
-            <Image x:Name="ImagePreview" Margin="5"/>
+        <Grid x:Name="ImageContainer" Margin="37,44,349,79">
+            <Label x:Name="NoImageLabel" Visibility="Visible" Content="No Image" FontSize="36" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Border BorderThickness="2" BorderBrush="Black" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Image x:Name="ImagePreview"/>
+            </Border>
         </Grid>
 
         <Grid Margin="0,44,0,79" HorizontalAlignment="Right" Width="327">
-            <TextBox x:Name="InputText" Text="Sample text" Height="100" VerticalAlignment="Top" Margin="0,0,10,0" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" TextChanged="InputText_Changed"/>
-            <Button x:Name="SaveBtn" Content="Save" Margin="193,125,0,0" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100" Click="SaveBtn_Click"/>
-            <Button x:Name="OpenBtn" Content="Open" Margin="47,125,0,0" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100" Click="OpenBtn_Click"/>
-            <Button x:Name="RefreshBtn" Content="Refresh" Margin="122,181,0,0" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100" Click="RefreshBtn_Click"/>
+            <TextBox x:Name="InputText" Text="Sample text" Height="100" VerticalAlignment="Top" Margin="10,0,10,0" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" TextChanged="InputText_Changed"/>
+
+            <Label Content="Font" HorizontalAlignment="Left" Margin="10,142,0,0" VerticalAlignment="Top"/>
+            <ComboBox x:Name="FontsDropdown" Margin="80,144,10,0" VerticalAlignment="Top" SelectionChanged="FontsDropdown_SelectionChanged" />
+
+            <Label Content="Font Size" HorizontalAlignment="Left" Margin="10,182,0,0" VerticalAlignment="Top"/>
+            <Slider x:Name="FontSizeSlide" Margin="169,187,10,0" VerticalAlignment="Top" ValueChanged="FontSizeSlide_ValueChanged" Minimum="10" Maximum="70"/>
+            <TextBox x:Name="FontSizeBox" Text="30" Height="30" VerticalAlignment="Top" Margin="114,180,0,0" TextChanged="FontSizeBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
+
+            <Label Content="Quote offset X" HorizontalAlignment="Left" Margin="8,239,0,0" VerticalAlignment="Top"/>
+            <Slider x:Name="QuotesOffsetXSlide" Margin="169,244,10,0" VerticalAlignment="Top" ValueChanged="QuotesOffsetXSlide_ValueChanged" Minimum="-20" Maximum="100"/>
+            <TextBox x:Name="QuoteOffsetXBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,238,0,0" TextChanged="QuoteOffsetXBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
+            <Label Content="Quote Offset Y" HorizontalAlignment="Left" Margin="8,269,0,0" VerticalAlignment="Top"/>
+            <Slider x:Name="QuotesOffsetYSlide" Margin="169,275,10,0" VerticalAlignment="Top" ValueChanged="QuotesOffsetYSlide_ValueChanged" Minimum="-20" Maximum="100"/>
+            <TextBox x:Name="QuoteOffsetYBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,268,0,0" TextChanged="QuoteOffsetYBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
+
+            <Label Content="Signature Offset X" HorizontalAlignment="Left" Margin="8,305,0,0" VerticalAlignment="Top"/>
+            <Slider x:Name="SignatureOffsetXSlide" Margin="169,310,10,0" VerticalAlignment="Top" ValueChanged="SignatureOffsetXSlide_ValueChanged" Minimum="-100" Maximum="100"/>
+            <TextBox x:Name="SignatureOffsetXBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,304,0,0" TextChanged="SignatureOffsetXBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
+            <Label Content="Signature Offset Y" HorizontalAlignment="Left" Margin="8,335,0,0" VerticalAlignment="Top"/>
+            <Slider x:Name="SignatureOffsetYSlide" Margin="169,341,10,0" VerticalAlignment="Top" ValueChanged="SignatureOffsetYSlide_ValueChanged" Minimum="-100" Maximum="50"/>
+            <TextBox x:Name="SignatureOffsetYBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,334,0,0" TextChanged="SignatureOffsetYBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
+
+            <Label Content="Text Offset X" HorizontalAlignment="Left" Margin="8,372,0,0" VerticalAlignment="Top"/>
+            <Slider x:Name="TextOffsetXSlide" Margin="169,377,10,0" VerticalAlignment="Top" ValueChanged="TextOffsetXSlide_ValueChanged" Minimum="-100" Maximum="100"/>
+            <TextBox x:Name="TextOffsetXBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,371,0,0" TextChanged="TextOffsetXBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
+            <Label Content="Text Offset Y" HorizontalAlignment="Left" Margin="8,402,0,0" VerticalAlignment="Top"/>
+            <Slider x:Name="TextOffsetYSlide" Margin="169,408,10,0" VerticalAlignment="Top" ValueChanged="TextOffsetYSlide_ValueChanged" Minimum="-100" Maximum="100"/>
+            <TextBox x:Name="TextOffsetYBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,401,0,0" TextChanged="TextOffsetYBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
+
+            <Button x:Name="SaveBtn" Content="Save" Margin="0,0,30,21" Height="30" VerticalAlignment="Bottom" Click="SaveBtn_Click" HorizontalAlignment="Right" Width="100"/>
+            <Button x:Name="OpenBtn" Content="Open" Margin="30,0,0,21" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="100" Click="OpenBtn_Click"/>
+            <Button x:Name="RefreshBtn" Content="Refresh" Margin="0,0,0,56" HorizontalAlignment="Center" Width="100" Click="RefreshBtn_Click" Height="30" VerticalAlignment="Bottom"/>
         </Grid>
     </Grid>
 </Window>

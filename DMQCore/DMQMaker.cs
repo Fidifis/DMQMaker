@@ -7,6 +7,8 @@ using SixLabors.ImageSharp.Drawing.Processing;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DMQCore
 {
@@ -81,9 +83,10 @@ namespace DMQCore
 
         private void LoadFont(string fontName, bool useDefault = false)
         {
+            Log.Debug("Loading font " + fontName);
             if (useDefault || !SystemFonts.TryGet(fontName, out fontFamily))
             {
-                if (!useDefault) Log.Error($"Couldn't find font {Font}. Default font is used insted.");
+                if (!useDefault) Log.Error($"Couldn't find font {Font}. Default font is used instead.");
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 using Stream? fontStream = assembly.GetManifestResourceStream("DMQCore.Materials.times.ttf");
                 FontCollection collection = new();
@@ -95,6 +98,16 @@ namespace DMQCore
                 }
                 fontFamily = collection.Add(fontStream);
             }
+        }
+
+        public static List<string> GetFonts()
+        {
+            var result = new List<string>(SystemFonts.Collection.Families.Count());
+            foreach(var family in SystemFonts.Collection.Families)
+            {
+                result.Add(family.Name);
+            }
+            return result;
         }
 
         public void LoadImage(string path)
@@ -184,7 +197,7 @@ namespace DMQCore
                 .DrawImage(resUpload.Image, new Point(0, 0), 1f)
                 .DrawText(textOptions, Text, Color.Black)
                 .DrawImage(resQuotes.Image, new Point(20 + QuotesOffsetX, 510 + QuotesOffsetY), 0.3f)
-                .DrawImage(resSignature.Image, new Point(520 + SignatureOffsetX, 680 + SignatureOffsetY), 1f)
+                .DrawImage(resSignature.Image, new Point(530 + SignatureOffsetX, 680 + SignatureOffsetY), 1f)
             ;});
 
             FinalImage = image;

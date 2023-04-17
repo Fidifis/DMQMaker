@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,10 +12,14 @@ namespace DMQEditor
 {
     public partial class MainWindow : Window
     {
+        readonly List<string> SystemFonts = DMQMaker.GetFonts();
+
         private DMQMaker Maker;
 
         string imageDiractory = "";
         string imageName = "";
+
+        bool dontChange = false;
 
         public MainWindow()
         {
@@ -23,7 +28,7 @@ namespace DMQEditor
                 #if DEBUG
                 1
                 #else
-                2
+                3
                 #endif
             ;
 
@@ -43,7 +48,12 @@ namespace DMQEditor
             Log.Verbose("MainWindow Constructor");
 
             Maker = new();
+
+            dontChange = true;
             InitializeComponent();
+            dontChange = false;
+
+            FontsDropdown.ItemsSource = SystemFonts;
         }
 
         private void WindowLoaded(object sender, RoutedEventArgs e)
@@ -57,22 +67,15 @@ namespace DMQEditor
             var logConfig = new LoggerConfiguration()
             .WriteTo.File("log.txt");
 
-            switch (verbosity)
+            logConfig = verbosity switch
             {
-                case 0:
-                    logConfig = logConfig.MinimumLevel.Verbose();
-                    break;
-                case 1:
-                    logConfig = logConfig.MinimumLevel.Debug();
-                    break;
-                case 2:
-                    logConfig = logConfig.MinimumLevel.Information();
-                    break;
-                case 3:
-                    logConfig = logConfig.MinimumLevel.Warning();
-                    break;
-            }
-
+                0 => logConfig.MinimumLevel.Verbose(),
+                1 => logConfig.MinimumLevel.Debug(),
+                2 => logConfig.MinimumLevel.Information(),
+                3 => logConfig.MinimumLevel.Warning(),
+                4 => logConfig.MinimumLevel.Error(),
+                _ => logConfig.MinimumLevel.Debug(),
+            };
             Log.Logger = logConfig.CreateLogger();
         }
 
@@ -174,6 +177,173 @@ namespace DMQEditor
         {
             Maker.MakeImage();
             UpdatePreview();
+        }
+
+        private void FontsDropdown_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Log.Verbose("Font changed");
+            Maker.Font = FontsDropdown.SelectedValue.ToString()!;
+        }
+
+        private void FontSizeSlide_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (dontChange)
+                return;
+
+            FontSizeBox.Text = ((int)FontSizeSlide.Value).ToString();
+        }
+
+        private void QuotesOffsetXSlide_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (dontChange)
+                return;
+
+            QuoteOffsetXBox.Text = ((int)QuotesOffsetXSlide.Value).ToString();
+        }
+
+        private void QuotesOffsetYSlide_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (dontChange)
+                return;
+
+            QuoteOffsetYBox.Text = ((int)QuotesOffsetYSlide.Value).ToString();
+        }
+
+        private void SignatureOffsetXSlide_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (dontChange)
+                return;
+
+            SignatureOffsetXBox.Text = ((int)SignatureOffsetXSlide.Value).ToString();
+        }
+
+        private void SignatureOffsetYSlide_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (dontChange)
+                return;
+
+            SignatureOffsetYBox.Text = ((int)SignatureOffsetYSlide.Value).ToString();
+        }
+
+        private void TextOffsetXSlide_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (dontChange)
+                return;
+
+            TextOffsetXBox.Text = ((int)TextOffsetXSlide.Value).ToString();
+        }
+
+        private void TextOffsetYSlide_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (dontChange)
+                return;
+
+            TextOffsetYBox.Text = ((int)TextOffsetYSlide.Value).ToString();
+        }
+
+        private void FontSizeBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            dontChange = true;
+            if (int.TryParse(FontSizeBox.Text, out int asInt))
+            {
+                Log.Verbose("Font size changed");
+                Maker.TextFontSize = asInt;
+                FontSizeSlide.Value = asInt;
+            }
+            else
+                Log.Warning("Invalid input for font size. Not a number.");
+
+            dontChange = false;
+        }
+
+        private void QuoteOffsetXBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            dontChange = true;
+            if (int.TryParse(QuoteOffsetXBox.Text, out int asInt))
+            {
+                Log.Verbose("Quotes offset X changed");
+                Maker.QuotesOffsetX = asInt;
+                QuotesOffsetXSlide.Value = asInt;
+            }
+            else
+                Log.Warning("Invalid input for quotes offset X. Not a number.");
+
+            dontChange = false;
+        }
+
+        private void QuoteOffsetYBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            dontChange = true;
+            if (int.TryParse(QuoteOffsetYBox.Text, out int asInt))
+            {
+                Log.Verbose("Quotes offset Y changed");
+                Maker.QuotesOffsetY = asInt;
+                QuotesOffsetYSlide.Value = asInt;
+            }
+            else
+                Log.Warning("Invalid input for quotes offset Y. Not a number.");
+
+            dontChange = false;
+        }
+
+        private void SignatureOffsetXBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            dontChange = true;
+            if (int.TryParse(SignatureOffsetXBox.Text, out int asInt))
+            {
+                Log.Verbose("Signature offset X changed");
+                Maker.SignatureOffsetX = asInt;
+                SignatureOffsetXSlide.Value = asInt;
+            }
+            else
+                Log.Warning("Invalid input for signature offset X. Not a number.");
+
+            dontChange = false;
+        }
+
+        private void SignatureOffsetYBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            dontChange = true;
+            if (int.TryParse(SignatureOffsetYBox.Text, out int asInt))
+            {
+                Log.Verbose("Signature offset Y changed");
+                Maker.SignatureOffsetY = asInt;
+                SignatureOffsetYSlide.Value = asInt;
+            }
+            else
+                Log.Warning("Invalid input for signature offset Y. Not a number.");
+
+            dontChange = false;
+        }
+
+        private void TextOffsetXBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            dontChange = true;
+            if (int.TryParse(TextOffsetXBox.Text, out int asInt))
+            {
+                Log.Verbose("Text offset X changed");
+                Maker.TextOffsetX = asInt;
+                TextOffsetXSlide.Value = asInt;
+            }
+            else
+                Log.Warning("Invalid input for text offset X. Not a number.");
+
+            dontChange = false;
+        }
+
+        private void TextOffsetYBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            dontChange = true;
+            if (int.TryParse(TextOffsetYBox.Text, out int asInt))
+            {
+                Log.Verbose("Text offset Y changed");
+                Maker.TextOffsetY = asInt;
+                TextOffsetYSlide.Value = asInt;
+            }
+            else
+                Log.Warning("Invalid input for text offset Y. Not a number.");
+
+            dontChange = false;
         }
     }
 }
