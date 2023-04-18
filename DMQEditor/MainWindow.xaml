@@ -24,12 +24,12 @@
             <Slider x:Name="FontSizeSlide" Margin="169,187,10,0" VerticalAlignment="Top" ValueChanged="FontSizeSlide_ValueChanged" Minimum="10" Maximum="70"/>
             <TextBox x:Name="FontSizeBox" Text="30" Height="30" VerticalAlignment="Top" Margin="114,180,0,0" TextChanged="FontSizeBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
 
-            <Label Content="Quote offset X" HorizontalAlignment="Left" Margin="8,239,0,0" VerticalAlignment="Top"/>
-            <Slider x:Name="QuotesOffsetXSlide" Margin="169,244,10,0" VerticalAlignment="Top" ValueChanged="QuotesOffsetXSlide_ValueChanged" Minimum="-20" Maximum="100"/>
-            <TextBox x:Name="QuoteOffsetXBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,238,0,0" TextChanged="QuoteOffsetXBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
-            <Label Content="Quote Offset Y" HorizontalAlignment="Left" Margin="8,269,0,0" VerticalAlignment="Top"/>
-            <Slider x:Name="QuotesOffsetYSlide" Margin="169,275,10,0" VerticalAlignment="Top" ValueChanged="QuotesOffsetYSlide_ValueChanged" Minimum="-20" Maximum="100"/>
-            <TextBox x:Name="QuoteOffsetYBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,268,0,0" TextChanged="QuoteOffsetYBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
+            <Label Content="Quote offset X" HorizontalAlignment="Left" Margin="10,370,0,0" VerticalAlignment="Top"/>
+            <Slider x:Name="QuotesOffsetXSlide" Margin="169,377,10,0" VerticalAlignment="Top" ValueChanged="QuotesOffsetXSlide_ValueChanged" Minimum="-20" Maximum="100"/>
+            <TextBox x:Name="QuoteOffsetXBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,370,0,0" TextChanged="QuoteOffsetXBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
+            <Label Content="Quote Offset Y" HorizontalAlignment="Left" Margin="10,400,0,0" VerticalAlignment="Top"/>
+            <Slider x:Name="QuotesOffsetYSlide" Margin="169,408,10,0" VerticalAlignment="Top" ValueChanged="QuotesOffsetYSlide_ValueChanged" Minimum="-20" Maximum="100"/>
+            <TextBox x:Name="QuoteOffsetYBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,400,0,0" TextChanged="QuoteOffsetYBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
 
             <Label Content="Signature Offset X" HorizontalAlignment="Left" Margin="8,305,0,0" VerticalAlignment="Top"/>
             <Slider x:Name="SignatureOffsetXSlide" Margin="169,310,10,0" VerticalAlignment="Top" ValueChanged="SignatureOffsetXSlide_ValueChanged" Minimum="-100" Maximum="100"/>
@@ -38,16 +38,15 @@
             <Slider x:Name="SignatureOffsetYSlide" Margin="169,341,10,0" VerticalAlignment="Top" ValueChanged="SignatureOffsetYSlide_ValueChanged" Minimum="-100" Maximum="50"/>
             <TextBox x:Name="SignatureOffsetYBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,334,0,0" TextChanged="SignatureOffsetYBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
 
-            <Label Content="Text Offset X" HorizontalAlignment="Left" Margin="8,372,0,0" VerticalAlignment="Top"/>
-            <Slider x:Name="TextOffsetXSlide" Margin="169,377,10,0" VerticalAlignment="Top" ValueChanged="TextOffsetXSlide_ValueChanged" Minimum="-100" Maximum="100"/>
-            <TextBox x:Name="TextOffsetXBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,371,0,0" TextChanged="TextOffsetXBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
-            <Label Content="Text Offset Y" HorizontalAlignment="Left" Margin="8,402,0,0" VerticalAlignment="Top"/>
-            <Slider x:Name="TextOffsetYSlide" Margin="169,408,10,0" VerticalAlignment="Top" ValueChanged="TextOffsetYSlide_ValueChanged" Minimum="-100" Maximum="100"/>
-            <TextBox x:Name="TextOffsetYBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,401,0,0" TextChanged="TextOffsetYBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
+            <Label Content="Text Offset X" HorizontalAlignment="Left" Margin="10,241,0,0" VerticalAlignment="Top"/>
+            <Slider x:Name="TextOffsetXSlide" Margin="169,246,10,0" VerticalAlignment="Top" ValueChanged="TextOffsetXSlide_ValueChanged" Minimum="-100" Maximum="100"/>
+            <TextBox x:Name="TextOffsetXBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,239,0,0" TextChanged="TextOffsetXBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
+            <Label Content="Text Offset Y" HorizontalAlignment="Left" Margin="10,271,0,0" VerticalAlignment="Top"/>
+            <Slider x:Name="TextOffsetYSlide" Margin="169,277,10,0" VerticalAlignment="Top" ValueChanged="TextOffsetYSlide_ValueChanged" Minimum="-100" Maximum="100"/>
+            <TextBox x:Name="TextOffsetYBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,269,0,0" TextChanged="TextOffsetYBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
 
             <Button x:Name="SaveBtn" Content="Save" Margin="0,0,30,21" Height="30" VerticalAlignment="Bottom" Click="SaveBtn_Click" HorizontalAlignment="Right" Width="100"/>
             <Button x:Name="OpenBtn" Content="Open" Margin="30,0,0,21" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="100" Click="OpenBtn_Click"/>
-            <Button x:Name="RefreshBtn" Content="Refresh" Margin="0,0,0,56" HorizontalAlignment="Center" Width="100" Click="RefreshBtn_Click" Height="30" VerticalAlignment="Bottom"/>
         </Grid>
     </Grid>
 </Window>

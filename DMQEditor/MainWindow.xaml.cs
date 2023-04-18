@@ -178,17 +178,12 @@ namespace DMQEditor
             }
         }
 
-        private void RefreshBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Refresh();
-        }
-
-        private async void Refresh()
+        private void Refresh()
         {
             if (hasChanged)
                 return;
             hasChanged = true;
-            await Task.Run(() =>
+            Task.Run(() =>
             {
                 lock (threadSync)
                 {

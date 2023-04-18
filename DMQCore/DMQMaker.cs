@@ -167,7 +167,7 @@ namespace DMQCore
                 Dpi = 72,
                 KerningMode = KerningMode.Standard,
                 WrappingLength = TextSizeWidth,
-                Origin = new System.Numerics.Vector2(120 + TextOffsetX, 600 + TextOffsetY),
+                Origin = new System.Numerics.Vector2(120 + TextOffsetX, 610 + TextOffsetY),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
             };
@@ -196,7 +196,7 @@ namespace DMQCore
             { x
                 .DrawImage(resUpload.Image, new Point(0, 0), 1f)
                 .DrawText(textOptions, Text, Color.Black)
-                .DrawImage(resQuotes.Image, new Point(20 + QuotesOffsetX, 510 + QuotesOffsetY), 0.3f)
+                .DrawImage(resQuotes.Image, new Point(20 + QuotesOffsetX, 510 + QuotesOffsetY), 0.2f)
                 .DrawImage(resSignature.Image, new Point(530 + SignatureOffsetX, 680 + SignatureOffsetY), 1f)
             ;});
 
