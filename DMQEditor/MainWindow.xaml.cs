@@ -4,7 +4,6 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -92,8 +91,8 @@ namespace DMQEditor
                 var openFileDialog = new OpenFileDialog
                 {
                     Title = "Select an image file",
-                    Filter = "Image files (*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif;*.tga;*.webp;*.psd;*.dib;*.ico;*.svg)|" +
-                  "*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif;*.tga;*.webp;*.psd;*.dib;*.ico;*.svg|" +
+                    Filter = "Image files (*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif;*.tga;*.webp)|" +
+                  "*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif;*.tga;*.webp|" +
                   "All files (*.*)|*.*"
                 };
                 if (openFileDialog.ShowDialog() != true)
@@ -165,8 +164,8 @@ namespace DMQEditor
                 OverwritePrompt = true,
                 Title = "Save Image",
                 Filter =
-                "Portable Network Graphics (*.png)|*.png|" +
                 "Joint Photographic Experts Group (*.jpg;*.jpeg)|*.jpg;*.jpeg|" +
+                "Portable Network Graphics (*.png)|*.png|" +
                 "All files|*.*"
             };
             if (saveFileDialog.ShowDialog() == true)
