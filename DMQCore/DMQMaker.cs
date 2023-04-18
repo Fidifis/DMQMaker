@@ -155,7 +155,7 @@ namespace DMQCore
         {
             if (uploadImage == null || quotes == null || signature == null)
             {
-                Log.Error("Making image without required material");
+                Log.Warning("Making image without required material");
                 return;
             }
 

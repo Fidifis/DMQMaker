@@ -28,17 +28,17 @@ namespace DMQEditor
         public MainWindow()
         {
             string[] args = Environment.GetCommandLineArgs();
-            byte verbosity =
+            sbyte verbosity =
                 #if DEBUG
                 1
                 #else
-                3
+                -1
                 #endif
             ;
 
             if (args.Length >= 2 && args[1].ToLower().Contains("-v"))
             {
-                if (byte.TryParse(args[1].ToLower().Trim().Replace("-v", ""), out byte converted))
+                if (sbyte.TryParse(args[1].ToLower().Trim().Replace("-v", ""), out sbyte converted))
                 {
                     verbosity = converted;
                 }
@@ -66,8 +66,11 @@ namespace DMQEditor
             UpdateCheck.CheckForUpdateAsync();
         }
 
-        static void CreateLogger(byte verbosity = 1)
+        static void CreateLogger(sbyte verbosity = 1)
         {
+            if (verbosity == -1)
+                return;
+
             var logConfig = new LoggerConfiguration()
             .WriteTo.File("log.txt");
 
