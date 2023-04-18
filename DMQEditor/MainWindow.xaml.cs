@@ -4,6 +4,8 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -14,12 +16,15 @@ namespace DMQEditor
     {
         readonly List<string> SystemFonts = DMQMaker.GetFonts();
 
+        private readonly object threadSync = new();
         private DMQMaker Maker;
 
         string imageDiractory = "";
         string imageName = "";
 
         bool dontChange = false;
+
+        bool hasChanged = false;
 
         public MainWindow()
         {
@@ -103,8 +108,7 @@ namespace DMQEditor
                 imageName = Path.GetFileName(imageName) ?? "";
 
                 Maker.LoadImage(path);
-                Maker.MakeImage();
-                UpdatePreview();
+                Refresh();
             }
             catch (Exception ex)
             {
@@ -116,7 +120,7 @@ namespace DMQEditor
 
         private void UpdatePreview()
         {
-            Log.Debug("Updating preview");
+            Log.Verbose("Updating preview");
             if (Maker.FinalImage == null)
             {
                 Log.Debug("Cannot update. No final image");
@@ -133,13 +137,14 @@ namespace DMQEditor
             bitmap.EndInit();
             bitmap.Freeze();
 
-            ImagePreview.Source = bitmap;
+            ImagePreview.Dispatcher.BeginInvoke(() => ImagePreview.Source = bitmap);
         }
 
         private void InputText_Changed(object sender, TextChangedEventArgs e)
         {
             Log.Verbose("Text changed");
             Maker.Text = InputText.Text;
+            Refresh();
         }
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
@@ -175,14 +180,30 @@ namespace DMQEditor
 
         private void RefreshBtn_Click(object sender, RoutedEventArgs e)
         {
-            Maker.MakeImage();
-            UpdatePreview();
+            Refresh();
+        }
+
+        private async void Refresh()
+        {
+            if (hasChanged)
+                return;
+            hasChanged = true;
+            await Task.Run(() =>
+            {
+                lock (threadSync)
+                {
+                    hasChanged = false;
+                    Maker.MakeImage();
+                    UpdatePreview();
+                }
+            });
         }
 
         private void FontsDropdown_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Log.Verbose("Font changed");
             Maker.Font = FontsDropdown.SelectedValue.ToString()!;
+            Refresh();
         }
 
         private void FontSizeSlide_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -191,6 +212,7 @@ namespace DMQEditor
                 return;
 
             FontSizeBox.Text = ((int)FontSizeSlide.Value).ToString();
+            Refresh();
         }
 
         private void QuotesOffsetXSlide_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -199,6 +221,7 @@ namespace DMQEditor
                 return;
 
             QuoteOffsetXBox.Text = ((int)QuotesOffsetXSlide.Value).ToString();
+            Refresh();
         }
 
         private void QuotesOffsetYSlide_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -207,6 +230,7 @@ namespace DMQEditor
                 return;
 
             QuoteOffsetYBox.Text = ((int)QuotesOffsetYSlide.Value).ToString();
+            Refresh();
         }
 
         private void SignatureOffsetXSlide_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -215,6 +239,7 @@ namespace DMQEditor
                 return;
 
             SignatureOffsetXBox.Text = ((int)SignatureOffsetXSlide.Value).ToString();
+            Refresh();
         }
 
         private void SignatureOffsetYSlide_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -223,6 +248,7 @@ namespace DMQEditor
                 return;
 
             SignatureOffsetYBox.Text = ((int)SignatureOffsetYSlide.Value).ToString();
+            Refresh();
         }
 
         private void TextOffsetXSlide_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -231,6 +257,7 @@ namespace DMQEditor
                 return;
 
             TextOffsetXBox.Text = ((int)TextOffsetXSlide.Value).ToString();
+            Refresh();
         }
 
         private void TextOffsetYSlide_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -239,6 +266,7 @@ namespace DMQEditor
                 return;
 
             TextOffsetYBox.Text = ((int)TextOffsetYSlide.Value).ToString();
+            Refresh();
         }
 
         private void FontSizeBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -249,6 +277,7 @@ namespace DMQEditor
                 Log.Verbose("Font size changed");
                 Maker.TextFontSize = asInt;
                 FontSizeSlide.Value = asInt;
+                Refresh();
             }
             else
                 Log.Warning("Invalid input for font size. Not a number.");
@@ -264,6 +293,7 @@ namespace DMQEditor
                 Log.Verbose("Quotes offset X changed");
                 Maker.QuotesOffsetX = asInt;
                 QuotesOffsetXSlide.Value = asInt;
+                Refresh();
             }
             else
                 Log.Warning("Invalid input for quotes offset X. Not a number.");
@@ -279,6 +309,7 @@ namespace DMQEditor
                 Log.Verbose("Quotes offset Y changed");
                 Maker.QuotesOffsetY = asInt;
                 QuotesOffsetYSlide.Value = asInt;
+                Refresh();
             }
             else
                 Log.Warning("Invalid input for quotes offset Y. Not a number.");
@@ -294,6 +325,7 @@ namespace DMQEditor
                 Log.Verbose("Signature offset X changed");
                 Maker.SignatureOffsetX = asInt;
                 SignatureOffsetXSlide.Value = asInt;
+                Refresh();
             }
             else
                 Log.Warning("Invalid input for signature offset X. Not a number.");
@@ -309,6 +341,7 @@ namespace DMQEditor
                 Log.Verbose("Signature offset Y changed");
                 Maker.SignatureOffsetY = asInt;
                 SignatureOffsetYSlide.Value = asInt;
+                Refresh();
             }
             else
                 Log.Warning("Invalid input for signature offset Y. Not a number.");
@@ -324,6 +357,7 @@ namespace DMQEditor
                 Log.Verbose("Text offset X changed");
                 Maker.TextOffsetX = asInt;
                 TextOffsetXSlide.Value = asInt;
+                Refresh();
             }
             else
                 Log.Warning("Invalid input for text offset X. Not a number.");
@@ -339,6 +373,7 @@ namespace DMQEditor
                 Log.Verbose("Text offset Y changed");
                 Maker.TextOffsetY = asInt;
                 TextOffsetYSlide.Value = asInt;
+                Refresh();
             }
             else
                 Log.Warning("Invalid input for text offset Y. Not a number.");
