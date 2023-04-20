@@ -32,7 +32,7 @@ namespace DMQCore
         public int FinalSize = 800;
         public int QuotesSize = 85;
         public int SignatureSize = 160;
-        public int TextSizeWidth = 560;
+        public int TextSizeWidth = 600;
         public int TextSizeHeight = 170;
 
         public int QuotesOffsetX = 0;
@@ -161,16 +161,13 @@ namespace DMQCore
 
             Log.Debug("Making image");
 
-            var font = fontFamily.CreateFont(TextFontSize);
-            var textOptions = new TextOptions(font)
-            {
-                Dpi = 72,
-                KerningMode = KerningMode.Standard,
-                WrappingLength = TextSizeWidth,
-                Origin = new System.Numerics.Vector2(120 + TextOffsetX, 610 + TextOffsetY),
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
+            var textOptions = MakeTextOptions(1.2f, TextFontSize);
+
+            var dsaf = TextMeasurer.Measure(Text, textOptions);
+            if (dsaf.Height > 150)
+                textOptions = MakeTextOptions(1f, TextFontSize);
+            else if (dsaf.Height < 90)
+                textOptions = MakeTextOptions(1.2f, TextFontSize + 3);
 
             var image = new ISImage(new Image<Rgb24>(FinalSize, FinalSize));
 
@@ -201,6 +198,21 @@ namespace DMQCore
             ;});
 
             FinalImage = image;
+        }
+
+        private TextOptions MakeTextOptions(float lineSpacing, int fontSize)
+        {
+            var font = fontFamily.CreateFont(fontSize);
+            return new TextOptions(font)
+            {
+                Dpi = 72,
+                KerningMode = KerningMode.Standard,
+                WrappingLength = TextSizeWidth,
+                Origin = new System.Numerics.Vector2(120 + TextOffsetX, 610 + TextOffsetY),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                LineSpacing = lineSpacing,
+            };
         }
     }
 }
