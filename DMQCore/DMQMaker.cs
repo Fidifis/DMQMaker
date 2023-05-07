@@ -21,11 +21,13 @@ namespace DMQCore
         private ISImage? quotes;
         private FontFamily fontFamily;
 
+        public DMQStyle Style = DMQStyle.SansCenter;
+
         public string Text = "";
 
         public string Font {
             get { return fontFamily.Name; }
-            set { LoadFont(value); }
+            set { if (value == "") LoadFont(value, true); else LoadFont(value); }
         }
         public int TextFontSize = 30;
 
@@ -88,7 +90,12 @@ namespace DMQCore
             {
                 if (!useDefault) Log.Error($"Couldn't find font {Font}. Default font is used instead.");
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                using Stream? fontStream = assembly.GetManifestResourceStream("DMQCore.Materials.times.ttf");
+                using Stream? fontStream = Style switch
+                {
+                    DMQStyle.SansCenter => assembly.GetManifestResourceStream("DMQCore.Materials.OpenSans-Regular.ttf"),
+                    DMQStyle.TimesLeft => assembly.GetManifestResourceStream("DMQCore.Materials.times.ttf"),
+                    _ => throw new NotImplementedException(),
+                };
                 FontCollection collection = new();
                 if (fontStream == null)
                 {
@@ -193,8 +200,8 @@ namespace DMQCore
             { x
                 .DrawImage(resUpload.Image, new Point(0, 0), 1f)
                 .DrawText(textOptions, Text, Color.Black)
-                .DrawImage(resQuotes.Image, new Point(20 + QuotesOffsetX, 510 + QuotesOffsetY), 0.2f)
-                .DrawImage(resSignature.Image, new Point(530 + SignatureOffsetX, 680 + SignatureOffsetY), 1f)
+                .DrawImage(resQuotes.Image, new Point(20 + QuotesOffsetX, 510 + QuotesOffsetY), 1f)
+                .DrawImage(resSignature.Image, new Point(530 + SignatureOffsetX, 688 + SignatureOffsetY), 1f)
             ;});
 
             FinalImage = image;
@@ -203,15 +210,31 @@ namespace DMQCore
         private TextOptions MakeTextOptions(float lineSpacing, int fontSize)
         {
             var font = fontFamily.CreateFont(fontSize);
-            return new TextOptions(font)
+            return Style switch
             {
-                Dpi = 72,
-                KerningMode = KerningMode.Standard,
-                WrappingLength = TextSizeWidth,
-                Origin = new System.Numerics.Vector2(120 + TextOffsetX, 610 + TextOffsetY),
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Center,
-                LineSpacing = lineSpacing,
+                DMQStyle.SansCenter => new TextOptions(font)
+                {
+                    Dpi = 72,
+                    KerningMode = KerningMode.Standard,
+                    WrappingLength = TextSizeWidth,
+                    Origin = new System.Numerics.Vector2(400 + TextOffsetX, 610 + TextOffsetY),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    LineSpacing = lineSpacing,
+                    TextAlignment = TextAlignment.Center,
+                },
+                DMQStyle.TimesLeft => new TextOptions(font)
+                {
+                    Dpi = 72,
+                    KerningMode = KerningMode.Standard,
+                    WrappingLength = TextSizeWidth,
+                    Origin = new System.Numerics.Vector2(120 + TextOffsetX, 610 + TextOffsetY),
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    LineSpacing = lineSpacing,
+                    TextAlignment = TextAlignment.Start,
+                },
+                _ => throw new NotImplementedException(),
             };
         }
     }

@@ -13,8 +13,6 @@ namespace DMQEditor
 {
     public partial class MainWindow : Window
     {
-        readonly List<string> SystemFonts = DMQMaker.GetFonts();
-
         private readonly object threadSync = new();
         private DMQMaker Maker;
 
@@ -57,7 +55,9 @@ namespace DMQEditor
             InitializeComponent();
             dontChange = false;
 
-            FontsDropdown.ItemsSource = SystemFonts;
+            List<string> systemFonts = new() { "" };
+            systemFonts.AddRange(DMQMaker.GetFonts());
+            FontsDropdown.ItemsSource = systemFonts;
         }
 
         private void WindowLoaded(object sender, RoutedEventArgs e)
