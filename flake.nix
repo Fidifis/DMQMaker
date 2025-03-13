@@ -1,4 +1,3 @@
-# What are Nix Flakes https://www.tweag.io/blog/2020-05-25-flakes/
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -9,29 +8,50 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; config.allowUnfree = true; };
-      in {
+      in rec {
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
             dotnet-sdk
             zip
+            nuget-to-json
           ];
         };
-        packages.default = pkgs.stdenv.mkDerivation {
-          pname = "dmq-maker-lambda";
-          version = "1.0.0";
+        packages = {
+          default = packages.lambda;
+          # core = pkgs.buildDotnetModule {
+          #   pname = "dmq-maker-core";
+          #   version = "1.1.0";
+          #
+          #   src = "${self}/DMQCore";
+          #   nugetDeps = builtins.fromJSON (builtins.readFile "Lambda/deps.json");
+          #   projectFile = "DMQCore/DMQCore.csproj";
+          #
+          #   nativeBuildInputs = with pkgs; [
+          #     dotnet-sdk
+          #   ];
+          # };
+          lambda = pkgs.buildDotnetModule {
+            pname = "dmq-maker-lambda";
+            version = "1.0.0";
 
-          src = "${self}";
+            src = "${self}";
+            nugetDeps = "${self}/Lambda/deps.json";
+            projectFile = "${self}/Lambda/Lambda.csproj";
 
-          nativeBuildInputs = with pkgs; [
-            dotnet-sdk
-          ];
+            buildInputs = with pkgs; [
+              dotnet-sdk
+            ];
 
-          buildPhase = ''
-            dotnet build Lambda/Lambda.csproj -c Release --output $out
+            # buildPhase = ''
+            #   dotnet build Lambda/Lambda.csproj -c Release --output $out
+          };
+          # doesnt work
+          generate-deps = pkgs.writeShellScriptBin "generateDeps" ''
+            git_root=$(git rev-parse --show-toplevel)
+            dotnet restore $git_root/Lambda/Lambda.csproj
+            ${pkgs.nuget-to-json}/bin/nuget-to-json $git_root/Lambda/packages > $git_root/Lambda/deps.json
           '';
-          __noChroot = true;
-          # NOTE: nix seems to be unable to build dotnet apps. It cannot fetch nugets. The noChroot should do something about it, but nix complains that sandbox must be false. `nix build --option sandbox false` - doesnt do anything (maybe must be run as root user)
-          # So I decided to build manually
+
         };
       }
     );
