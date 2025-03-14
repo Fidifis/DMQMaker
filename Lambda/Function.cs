@@ -6,8 +6,9 @@ using DMQCore;
 using Lambda;
 using System.Text.Json;
 
-var handler = (Event input, ILambdaContext context) =>
+var handler = (APIGatewayProxyRequest request, ILambdaContext context) =>
 {
+    var input = JsonSerializer.Deserialize<Event>(request.Body);
     Console.WriteLine("Text: " + input.Text);
     Console.WriteLine("base64 length: " + input.ImageBase64.Length);
 
