@@ -4,11 +4,15 @@ using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.Serialization.SystemTextJson;
 using DMQCore;
 using Lambda;
+using System.Text;
 using System.Text.Json;
 
 var handler = (APIGatewayProxyRequest request, ILambdaContext context) =>
 {
-    var input = JsonSerializer.Deserialize<Event>(request.Body);
+    string body = request.IsBase64Encoded
+        ? Encoding.UTF8.GetString(Convert.FromBase64String(request.Body))
+        : request.Body;
+    var input = JsonSerializer.Deserialize<Event>(body);
     Console.WriteLine("Text: " + input.Text);
     Console.WriteLine("base64 length: " + input.ImageBase64.Length);
 
