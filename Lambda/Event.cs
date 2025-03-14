@@ -2,7 +2,7 @@
 {
     public struct Event
     {
-        public string ImageBase64;
-        public string Text;
+        public string ImageBase64 { get; set; }
+        public string Text { get; set; }
     }
 }
