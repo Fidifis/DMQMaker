@@ -1,3 +1,4 @@
+using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.Serialization.SystemTextJson;
@@ -7,6 +8,9 @@ using System.Text.Json;
 
 var handler = (Event input, ILambdaContext context) =>
 {
+    Console.WriteLine("Text: " + input.Text);
+    Console.WriteLine("base64 length: " + input.ImageBase64.Length);
+
     DMQMaker maker = new();
 
     using MemoryStream finalBytes = new();
@@ -17,10 +21,15 @@ var handler = (Event input, ILambdaContext context) =>
 
     maker.FinalImage!.CopyToStream(finalBytes);
     var result = Convert.ToBase64String(finalBytes.ToArray());
-    return JsonSerializer.Serialize(new
+    return new APIGatewayProxyResponse
     {
-        resultBase64 = result
-    });
+        StatusCode = 200,
+        Headers = new Dictionary<string, string> {{"Content-Type", "application/json"}},
+        Body = JsonSerializer.Serialize(new
+        {
+            resultBase64 = result,
+        }),
+    };
 };
 
 await LambdaBootstrapBuilder.Create(handler, new DefaultLambdaJsonSerializer())
