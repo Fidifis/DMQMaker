@@ -14,7 +14,6 @@ var handler = (APIGatewayProxyRequest request, ILambdaContext context) =>
         : request.Body;
     var input = JsonSerializer.Deserialize<Event>(body);
     Console.WriteLine("Text: " + input.Text);
-    Console.WriteLine("base64 length: " + input.ImageBase64.Length);
 
     DMQMaker maker = new();
 
