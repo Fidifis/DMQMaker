@@ -170,7 +170,7 @@ namespace DMQCore
 
             var textOptions = MakeTextOptions(1.2f, TextFontSize);
 
-            var dsaf = TextMeasurer.Measure(Text, textOptions);
+            var dsaf = TextMeasurer.MeasureSize(Text, textOptions);
             if (dsaf.Height > 150)
                 textOptions = MakeTextOptions(1f, TextFontSize);
             else if (dsaf.Height < 90)
@@ -207,12 +207,12 @@ namespace DMQCore
             FinalImage = image;
         }
 
-        private TextOptions MakeTextOptions(float lineSpacing, int fontSize)
+        private RichTextOptions MakeTextOptions(float lineSpacing, int fontSize)
         {
             var font = fontFamily.CreateFont(fontSize);
             return Style switch
             {
-                DMQStyle.SansCenter => new TextOptions(font)
+                DMQStyle.SansCenter => new RichTextOptions(font)
                 {
                     Dpi = 72,
                     KerningMode = KerningMode.Standard,
@@ -223,7 +223,7 @@ namespace DMQCore
                     LineSpacing = lineSpacing,
                     TextAlignment = TextAlignment.Center,
                 },
-                DMQStyle.TimesLeft => new TextOptions(font)
+                DMQStyle.TimesLeft => new RichTextOptions(font)
                 {
                     Dpi = 72,
                     KerningMode = KerningMode.Standard,
