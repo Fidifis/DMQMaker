@@ -1,13 +1,18 @@
 [
   {
+    "pname": "Amazon.Lambda.APIGatewayEvents",
+    "version": "2.7.1",
+    "hash": "sha256-iviMc8Eqh2RMLHvwa7V2J3W310goOW0j42axj2KoZGE="
+  },
+  {
     "pname": "Amazon.Lambda.Core",
     "version": "2.5.0",
     "hash": "sha256-uJ1rySHdds7vFtDdyXRdQ8MwcsBRHN68zX12ZqbvJpQ="
   },
   {
     "pname": "Amazon.Lambda.RuntimeSupport",
-    "version": "1.12.0",
-    "hash": "sha256-oyz1xjb6Uit60M/d5+159KMIuuCEpvLeqIIyohyZXwE="
+    "version": "1.12.3",
+    "hash": "sha256-DS9O0K2I+1+pVZkLx/4eh0qoLcxm5ND/V4VLIOaF2eA="
   },
   {
     "pname": "Amazon.Lambda.Serialization.SystemTextJson",
@@ -21,22 +26,22 @@
   },
   {
     "pname": "SixLabors.Fonts",
-    "version": "1.0.0-beta19",
-    "hash": "sha256-IV0bq+Q6ZM0ijbn7YTU8QeU+41WAZnqs89jocvCj3jc="
+    "version": "2.1.2",
+    "hash": "sha256-HDBUHdMP3v2S1Y+doxjljXNwljZcSSlxtbiDNsiEKmw="
   },
   {
     "pname": "SixLabors.ImageSharp",
-    "version": "3.0.1",
-    "hash": "sha256-oxCQY+6PQ98ddQh9vRmtkly60RnB1ur112BMeO1014s="
+    "version": "3.1.7",
+    "hash": "sha256-jMD/FiIwW1kNhTI6hKig8/QFOO3eTQX/C22cSAcKBH4="
   },
   {
     "pname": "SixLabors.ImageSharp.Drawing",
-    "version": "1.0.0-beta15",
-    "hash": "sha256-J/kyXVUgvkdaIdSi44ZaE/Gp2/BaBrIIYBgCTOnH83w="
+    "version": "2.1.5",
+    "hash": "sha256-n54bDQpp5i2V4LgMXuuq/bHHs6/7PyK8eSx0vJ2NHbA="
   },
   {
     "pname": "SnapshotRestore.Registry",
-    "version": "1.0.0",
-    "hash": "sha256-X6ZDl42WZoWOlmyabzS8vEKrv+N1mJ4PWaeVEFwENgQ="
+    "version": "1.0.1",
+    "hash": "sha256-m7QsD7fRxefH7u0erFUElawRjZbcjXgwrbCaWczYNeI="
   }
 ]

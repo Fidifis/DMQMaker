@@ -27,10 +27,11 @@
             projectFile = "./Lambda/Lambda.csproj";
 
             buildType = "Release";
+            selfContainedBuild = false;
           };
           generate-deps = pkgs.writeShellScriptBin "generateDeps" ''
             git_root=$(git rev-parse --show-toplevel)
-            dotnet restore $git_root/Lambda/Lambda.csproj
+            dotnet restore --packages $git_root/Lambda/packages $git_root/Lambda/Lambda.csproj
             ${pkgs.nuget-to-json}/bin/nuget-to-json $git_root/Lambda/packages > $git_root/Lambda/deps.json
           '';
         };
@@ -40,4 +41,4 @@
 
 # Here are build commands to make zip for lambda:
 # dotnet build Lambda/Lambda.csproj -c Release
-# mkdir -p bin && zip -r -j bin/package.zip Lambda/bin/Release/net8.0/ 
+# mkdir -p bin && zip -r -j bin/package.zip Lambda/bin/Release/net8.0/linux-x64/publish/
