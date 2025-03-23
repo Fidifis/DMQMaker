@@ -40,5 +40,5 @@
 }
 
 # Here are build commands to make zip for lambda:
-# dotnet build Lambda/Lambda.csproj -c Release
+# dotnet publish Lambda/Lambda.csproj -c Release
 # mkdir -p bin && zip -r -j bin/package.zip Lambda/bin/Release/net8.0/linux-x64/publish/
