@@ -14,17 +14,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Materials\OpenSans-Regular.ttf" />
+    <None Remove="Materials\Merriweather.ttf" />
     <None Remove="Materials\Quotes.png" />
     <None Remove="Materials\Signature.png" />
-    <None Remove="Materials\times.ttf" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Materials\OpenSans-Regular.ttf" />
+    <EmbeddedResource Include="Materials\Merriweather.ttf" />
     <EmbeddedResource Include="Materials\Quotes.png" />
     <EmbeddedResource Include="Materials\Signature.png" />
-    <EmbeddedResource Include="Materials\times.ttf" />
   </ItemGroup>
 
   <ItemGroup>

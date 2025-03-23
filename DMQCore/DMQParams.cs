@@ -3,7 +3,7 @@
     public struct DMQParams
     {
         public float TextOffsetY { get; set; } = 0f;
-        public int TextSize { get; set; } = 30;
+        public int TextSize { get; set; } = 27;
         public float SignatureOffsetY { get; set; } = 0f;
         public float SignatureSize { get; set; } = 1f;
         public float QuotesSize { get; set; } = 1f;

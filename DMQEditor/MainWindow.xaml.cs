@@ -20,6 +20,8 @@ namespace DMQEditor
         private Image? image;
         private Image? finalImage;
 
+        private string dmqText = "";
+
         string imageDiractory = "";
         string imageName = "";
 
@@ -150,6 +152,7 @@ namespace DMQEditor
         private void InputText_Changed(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             Log.Verbose("Text changed");
+            dmqText = InputText.Text;
             Refresh();
         }
 
@@ -191,7 +194,7 @@ namespace DMQEditor
                 Log.Debug("Cannot make image. Nothing uploaded");
                 return;
             }
-            finalImage = Maker.MakeImage(image, InputText.Text, new DMQParams(), font);
+            finalImage = Maker.MakeImage(image, dmqText, new DMQParams(), font);
         }
 
         private void Refresh()
@@ -199,15 +202,15 @@ namespace DMQEditor
             if (hasChanged)
                 return;
             hasChanged = true;
-            //Task.Run(() =>
-            //{
-            //    lock (threadSync)
-            //    {
+            Task.Run(() =>
+            {
+                lock (threadSync)
+                {
                     hasChanged = false;
                     MakeImage();
                     UpdatePreview();
-            //    }
-            //});
+                }
+            });
         }
 
         private void FontsDropdown_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)

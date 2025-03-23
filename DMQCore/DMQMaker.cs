@@ -48,7 +48,7 @@ namespace DMQCore
             {
                 if (fontName != null) Log.Error($"Couldn't find font {fontName}. Default font is used instead.");
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                using Stream? fontStream = assembly.GetManifestResourceStream("DMQCore.Materials.times.ttf");
+                using Stream? fontStream = assembly.GetManifestResourceStream("DMQCore.Materials.Merriweather.ttf");
                 FontCollection collection = new();
                 if (fontStream == null)
                 {
@@ -102,7 +102,7 @@ namespace DMQCore
             });
             var resQuotes = DefaultQuotes.Clone((x) =>
             {
-                commonResizeOtions.Size = new Size((int)(paramz.ResolutionX / 15f * paramz.QuotesSize), 0);
+                commonResizeOtions.Size = new Size((int)(paramz.ResolutionX / 10f * paramz.QuotesSize), 0);
                 x.Resize(commonResizeOtions);
             });
 
@@ -118,7 +118,7 @@ namespace DMQCore
                 .Fill(Brushes.Solid(Color.White), new RectangleF(0, textAreaOriginY, paramz.ResolutionX, paramz.ResolutionY - textAreaOriginY))
                 .DrawText(textOptions, text, Color.Black)
                 .DrawImage(resQuotes, new Point((int)(paramz.ResolutionX / 2f - resQuotes.Width / 2f), (int)(textAreaOriginY - resQuotes.Height / 2f)), 1f)
-                .DrawImage(resSignature, new Point((int)(paramz.ResolutionX / 2f - resSignature.Width / 2f), (int)(textOrigin.Y + textMeasure.Height)), 1f)
+                .DrawImage(resSignature, new Point((int)(paramz.ResolutionX / 2f - resSignature.Width / 2f), (int)(textOrigin.Y + textMeasure.Height + 20)), 1f)
             ;});
 
             return finalImage;
