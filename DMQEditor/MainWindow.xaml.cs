@@ -21,6 +21,7 @@ namespace DMQEditor
         private Image? finalImage;
 
         private string dmqText = "";
+        private DMQParams dmqParams = new();
 
         string imageDiractory = "";
         string imageName = "";
@@ -194,7 +195,7 @@ namespace DMQEditor
                 Log.Debug("Cannot make image. Nothing uploaded");
                 return;
             }
-            finalImage = Maker.MakeImage(image, dmqText, new DMQParams(), font);
+            finalImage = Maker.MakeImage(image, dmqText, dmqParams, font);
         }
 
         private void Refresh()
@@ -286,15 +287,15 @@ namespace DMQEditor
         private void FontSizeBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             dontChange = true;
-            //if (int.TryParse(FontSizeBox.Text, out int asInt))
-            //{
-            //    Log.Verbose("Font size changed");
-            //    Maker.TextFontSize = asInt;
-            //    FontSizeSlide.Value = asInt;
-            //    Refresh();
-            //}
-            //else
-            //    Log.Warning("Invalid input for font size. Not a number.");
+            if (int.TryParse(FontSizeBox.Text, out int asInt))
+            {
+                Log.Verbose("Font size changed");
+                dmqParams.TextSize = asInt;
+                FontSizeSlide.Value = asInt;
+                Refresh();
+            }
+            else
+                Log.Warning("Invalid input for font size. Not a number.");
 
             dontChange = false;
         }
@@ -318,15 +319,15 @@ namespace DMQEditor
         private void QuoteOffsetYBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             dontChange = true;
-            //if (int.TryParse(QuoteOffsetYBox.Text, out int asInt))
-            //{
-            //    Log.Verbose("Quotes offset Y changed");
-            //    Maker.QuotesOffsetY = asInt;
-            //    QuotesOffsetYSlide.Value = asInt;
-            //    Refresh();
-            //}
-            //else
-            //    Log.Warning("Invalid input for quotes offset Y. Not a number.");
+            if (float.TryParse(QuoteOffsetYBox.Text, out float asFloat))
+            {
+                Log.Verbose("Quotes offset Y changed");
+                dmqParams.TextAreaPercentage = asFloat;
+                QuotesOffsetYSlide.Value = asFloat;
+                Refresh();
+            }
+            else
+                Log.Warning("Invalid input for quotes offset Y. Not a number.");
 
             dontChange = false;
         }
