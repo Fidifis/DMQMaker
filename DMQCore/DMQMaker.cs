@@ -12,90 +12,51 @@ using System.Linq;
 
 namespace DMQCore
 {
-    public class DMQMaker
+    public sealed class DMQMaker : IDisposable
     {
-        public ISImage? FinalImage { get; private set; }
+        private readonly Image DefaultQuotes;
+        private readonly Image DefaultSignature;
+        private readonly FontFamily DefaultFont;
 
-        private ISImage? uploadImage;
-        private ISImage? signature;
-        private ISImage? quotes;
-        private FontFamily fontFamily;
-
-        public DMQStyle Style = DMQStyle.SansCenter;
-
-        public string Text = "";
-
-        public string Font {
-            get { return fontFamily.Name; }
-            set { if (value == "") LoadFont(value, true); else LoadFont(value); }
-        }
-        public int TextFontSize = 30;
-
-        public int FinalSize = 800;
-        public int QuotesSize = 85;
-        public int SignatureSize = 160;
-        public int TextSizeWidth = 600;
-        public int TextSizeHeight = 170;
-
-        public int QuotesOffsetX = 0;
-        public int QuotesOffsetY = 0;
-        public int SignatureOffsetX = 0;
-        public int SignatureOffsetY = 0;
-        public int TextOffsetX = 0;
-        public int TextOffsetY = 0;
-
-        public DMQMaker(bool loadStandardPrerequisites = true)
+        public DMQMaker(Image? quotes = null, Image? signature = null)
         {
-            if (loadStandardPrerequisites)
-                LoadStandardPrerequisites();
-        }
+            Log.Verbose("Invoke DMQMaker Constructor");
 
-        public void LoadStandardPrerequisites()
-        {
-            Log.Information("Loading Standard Prerequisites");
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            using Stream? signatureStream = assembly.GetManifestResourceStream("DMQCore.Materials.Signature.png");
-            using Stream? quotesStream = assembly.GetManifestResourceStream("DMQCore.Materials.Quotes.png");
-
-            if (signatureStream == null || quotesStream == null)
+            DefaultQuotes = quotes switch
             {
-                const string msg = "Cannot get required materials";
+                null => LoadInternalImage("DMQCore.Materials.Quotes.png"),
+                _ => quotes,
+            };
+            DefaultSignature = signature switch
+            {
+                null => LoadInternalImage("DMQCore.Materials.Signature.png"),
+                _ => signature,
+            };
+            DefaultFont = LoadFont(null);
+        }
+
+        private static Image LoadInternalImage(string internalPath)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Log.Debug($"Image not supplied. Loading built-in {internalPath}");
+            using Stream? quotesStream = assembly.GetManifestResourceStream(internalPath);
+            if (quotesStream == null)
+            {
+                string msg = $"Cannot get built-in image {internalPath}";
                 Log.Fatal(msg);
                 throw new FileLoadException(msg);
             }
-
-            signature = new(signatureStream);
-            quotes = new(quotesStream);
-            LoadFont("", useDefault: true);
+            return Image.Load(quotesStream);
         }
 
-        public void Clear(bool full = false)
-        {
-            Log.Information("Clearing DMQMaker state");
-            uploadImage = null;
-            FinalImage = null;
-
-            if (full)
-            {
-                signature = null;
-                quotes = null;
-                Log.Debug("State cleared fully");
-            }
-        }
-
-        private void LoadFont(string fontName, bool useDefault = false)
+        private static FontFamily LoadFont(string? fontName)
         {
             Log.Debug("Loading font " + fontName);
-            if (useDefault || !SystemFonts.TryGet(fontName, out fontFamily))
+            if (fontName == null || !SystemFonts.TryGet(fontName, out FontFamily fontFamily))
             {
-                if (!useDefault) Log.Error($"Couldn't find font {Font}. Default font is used instead.");
+                if (fontName != null) Log.Error($"Couldn't find font {fontName}. Default font is used instead.");
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                using Stream? fontStream = Style switch
-                {
-                    DMQStyle.SansCenter => assembly.GetManifestResourceStream("DMQCore.Materials.OpenSans-Regular.ttf"),
-                    DMQStyle.TimesLeft => assembly.GetManifestResourceStream("DMQCore.Materials.times.ttf"),
-                    _ => throw new NotImplementedException(),
-                };
+                using Stream? fontStream = assembly.GetManifestResourceStream("DMQCore.Materials.times.ttf");
                 FontCollection collection = new();
                 if (fontStream == null)
                 {
@@ -105,6 +66,7 @@ namespace DMQCore
                 }
                 fontFamily = collection.Add(fontStream);
             }
+            return fontFamily;
         }
 
         public static List<string> GetFonts()
@@ -117,125 +79,81 @@ namespace DMQCore
             return result;
         }
 
-        public void LoadImage(string path)
+        public Image MakeImage(Image image, string text, DMQParams paramz, string? font = null)
         {
-            Log.Debug("Loading uploaded");
-            uploadImage = LoadISImage(path);
-        }
-
-        public void LoadImage(Stream stream)
-        {
-            Log.Debug("Loading uploaded");
-            uploadImage = new(stream);
-        }
-
-        public void LoadImage(byte[] data)
-        {
-            Log.Debug("Loading uploaded");
-            uploadImage = new(data);
-        }
-
-        public void LoadSignature(string path = "Signature.png")
-        {
-            Log.Debug("Loading signature");
-            signature = LoadISImage(path);
-        }
-
-        public void LoadQuotes(string path = "Quotes.svg")
-        {
-            Log.Debug("Loading quotes");
-            quotes = LoadISImage(path);
-        }
-
-        private ISImage LoadISImage(string path)
-        {
-            Log.Information("Loading image from path: " + path);
-            if (!File.Exists(path))
-                throw new ArgumentException("Cannot load image. Invalid path: " + path);
-
-            var image = new ISImage(path);
-
-            return image;
-        }
-
-        public void MakeImage()
-        {
-            if (uploadImage == null || quotes == null || signature == null)
+            if (text.Length == 0)
             {
-                Log.Warning("Making image without required material");
-                return;
+                string msg = $"Given text is empty";
+                Log.Fatal(msg);
+                throw new ArgumentException(msg);
             }
+
+            FontFamily fontFam = LoadFont(font);
 
             Log.Debug("Making image");
 
-            var textOptions = MakeTextOptions(1.2f, TextFontSize);
+            var textOrigin = new System.Numerics.Vector2(paramz.ResolutionX / 2 * paramz.TextPaddingX, paramz.ResolutionY / 2 * paramz.TextPaddingY);
+            var textOptions = MakeTextOptions(fontFam, textOrigin, paramz);
 
-            var dsaf = TextMeasurer.MeasureSize(Text, textOptions);
-            if (dsaf.Height > 150)
-                textOptions = MakeTextOptions(1f, TextFontSize);
-            else if (dsaf.Height < 90)
-                textOptions = MakeTextOptions(1.2f, TextFontSize + 3);
+            //var dsaf = TextMeasurer.MeasureSize(Text, textOptions);
+            //if (dsaf.Height > 150)
+            //    textOptions = MakeTextOptions(1f, TextFontSize);
+            //else if (dsaf.Height < 90)
+            //    textOptions = MakeTextOptions(1.2f, TextFontSize + 3);
 
-            var image = new ISImage(new Image<Rgb24>(FinalSize, FinalSize));
+            var finalImage = new Image<Rgb24>(paramz.ResolutionX, paramz.ResolutionY);
 
             var commonResizeOtions = new ResizeOptions() { Mode = ResizeMode.Pad, Position = AnchorPositionMode.TopLeft, PadColor = Color.White };
 
-            var resUpload = uploadImage.Clone((x) =>
+            var resImage = image.Clone((x) =>
             {
-                commonResizeOtions.Size = new Size(FinalSize);
+                commonResizeOtions.Size = new Size(paramz.ResolutionX);
                 x.Resize(commonResizeOtions);
             });
-            var resSignature = signature.Clone((x) =>
+            var resSignature = DefaultSignature.Clone((x) =>
             {
-                commonResizeOtions.Size = new Size(SignatureSize);
+                commonResizeOtions.Size = new Size((int)(paramz.ResolutionX / 5f * paramz.SignatureSize));
                 x.Resize(commonResizeOtions);
             });
-            var resQuotes = quotes.Clone((x) =>
+            var resQuotes = DefaultQuotes.Clone((x) =>
             {
-                commonResizeOtions.Size = new Size(QuotesSize);
+                commonResizeOtions.Size = new Size((int)(paramz.ResolutionX / 10f * paramz.QuotesSize));
                 x.Resize(commonResizeOtions);
             });
-            
-            image.Image.Mutate((x) =>
+
+            var textMeasure = TextMeasurer.MeasureSize(text, textOptions);
+
+            finalImage.Mutate((x) =>
             { x
-                .DrawImage(resUpload.Image, new Point(0, 0), 1f)
-                .DrawText(textOptions, Text, Color.Black)
-                .DrawImage(resQuotes.Image, new Point(20 + QuotesOffsetX, 510 + QuotesOffsetY), 1f)
-                .DrawImage(resSignature.Image, new Point(530 + SignatureOffsetX, 688 + SignatureOffsetY), 1f)
+                .DrawImage(resImage, new Point(0, 0), 1f)
+                .DrawText(textOptions, text, Color.Black)
+                .DrawImage(resQuotes, new Point((int)(paramz.ResolutionX / 2f - resQuotes.Width / 2f), (int)(paramz.ResolutionY * (1 - paramz.TextAreaPercentage) - resQuotes.Height / 2f)), 1f)
+                .DrawImage(resSignature, new Point((int)(paramz.ResolutionX / 2f - resSignature.Width / 2f), (int)(textOrigin.Y + textMeasure.Height)), 1f)
             ;});
 
-            FinalImage = image;
+            return finalImage;
         }
 
-        private RichTextOptions MakeTextOptions(float lineSpacing, int fontSize)
+        private static RichTextOptions MakeTextOptions(FontFamily fontFamily, System.Numerics.Vector2 origin, DMQParams paramz)
         {
-            var font = fontFamily.CreateFont(fontSize);
-            return Style switch
-            {
-                DMQStyle.SansCenter => new RichTextOptions(font)
+            var font = fontFamily.CreateFont(paramz.TextSize);
+            return new RichTextOptions(font)
                 {
                     Dpi = 72,
                     KerningMode = KerningMode.Standard,
-                    WrappingLength = TextSizeWidth,
-                    Origin = new System.Numerics.Vector2(400 + TextOffsetX, 610 + TextOffsetY),
+                    WrappingLength = paramz.ResolutionX * (1 - paramz.TextPaddingX),
+                    Origin = origin,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
-                    LineSpacing = lineSpacing,
+                    LineSpacing = paramz.LineSpacing,
                     TextAlignment = TextAlignment.Center,
-                },
-                DMQStyle.TimesLeft => new RichTextOptions(font)
-                {
-                    Dpi = 72,
-                    KerningMode = KerningMode.Standard,
-                    WrappingLength = TextSizeWidth,
-                    Origin = new System.Numerics.Vector2(120 + TextOffsetX, 610 + TextOffsetY),
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    LineSpacing = lineSpacing,
-                    TextAlignment = TextAlignment.Start,
-                },
-                _ => throw new NotImplementedException(),
-            };
+                };
+        }
+
+        public void Dispose()
+        {
+            DefaultQuotes.Dispose();
+            DefaultSignature.Dispose();
         }
     }
 }
