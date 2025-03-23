@@ -1,12 +1,13 @@
 ﻿using DMQCore;
 using Microsoft.Win32;
 using Serilog;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Png;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 namespace DMQEditor
@@ -16,8 +17,13 @@ namespace DMQEditor
         private readonly object threadSync = new();
         private DMQMaker Maker;
 
+        private Image? image;
+        private Image? finalImage;
+
         string imageDiractory = "";
         string imageName = "";
+
+        string? font = null;
 
         bool dontChange = false;
 
@@ -55,8 +61,7 @@ namespace DMQEditor
             InitializeComponent();
             dontChange = false;
 
-            List<string> systemFonts = new() { "" };
-            systemFonts.AddRange(DMQMaker.GetFonts());
+            List<string> systemFonts = ["", .. DMQMaker.GetFonts()];
             FontsDropdown.ItemsSource = systemFonts;
         }
 
@@ -109,7 +114,7 @@ namespace DMQEditor
                 imageDiractory = Path.GetDirectoryName(imageDiractory) ?? "";
                 imageName = Path.GetFileName(imageName) ?? "";
 
-                Maker.LoadImage(path);
+                image = Image.Load(path);
                 Refresh();
             }
             catch (Exception ex)
@@ -123,14 +128,14 @@ namespace DMQEditor
         private void UpdatePreview()
         {
             Log.Verbose("Updating preview");
-            if (Maker.FinalImage == null)
+            if (finalImage == null)
             {
                 Log.Debug("Cannot update. No final image");
                 return;
             }
 
             using var stream = new MemoryStream();
-            Maker.FinalImage.CopyToStream(stream);
+            finalImage.Save(stream, PngFormat.Instance);
 
             var bitmap = new BitmapImage();
             bitmap.BeginInit();
@@ -142,17 +147,16 @@ namespace DMQEditor
             ImagePreview.Dispatcher.BeginInvoke(() => ImagePreview.Source = bitmap);
         }
 
-        private void InputText_Changed(object sender, TextChangedEventArgs e)
+        private void InputText_Changed(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             Log.Verbose("Text changed");
-            Maker.Text = InputText.Text;
             Refresh();
         }
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
             Log.Verbose("Save button clicked");
-            if (Maker.FinalImage == null)
+            if (finalImage == null)
             {
                 const string msg = "Image cannot be saved, because it is empty.";
                 Log.Error(msg);
@@ -173,11 +177,21 @@ namespace DMQEditor
             };
             if (saveFileDialog.ShowDialog() == true)
             {
-                Maker.MakeImage();
+                MakeImage();
 
                 Log.Information("Saving to file:" + saveFileDialog.FileName);
-                Maker.FinalImage.Save(saveFileDialog.FileName);
+                finalImage.Save(saveFileDialog.FileName);
             }
+        }
+
+        private void MakeImage()
+        {
+            if (image == null)
+            {
+                Log.Debug("Cannot make image. Nothing uploaded");
+                return;
+            }
+            finalImage = Maker.MakeImage(image, InputText.Text, new DMQParams(), font);
         }
 
         private void Refresh()
@@ -185,21 +199,21 @@ namespace DMQEditor
             if (hasChanged)
                 return;
             hasChanged = true;
-            Task.Run(() =>
-            {
-                lock (threadSync)
-                {
+            //Task.Run(() =>
+            //{
+            //    lock (threadSync)
+            //    {
                     hasChanged = false;
-                    Maker.MakeImage();
+                    MakeImage();
                     UpdatePreview();
-                }
-            });
+            //    }
+            //});
         }
 
-        private void FontsDropdown_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void FontsDropdown_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             Log.Verbose("Font changed");
-            Maker.Font = FontsDropdown.SelectedValue.ToString()!;
+            font = FontsDropdown.SelectedValue.ToString()!;
             Refresh();
         }
 
@@ -266,114 +280,114 @@ namespace DMQEditor
             Refresh();
         }
 
-        private void FontSizeBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void FontSizeBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             dontChange = true;
-            if (int.TryParse(FontSizeBox.Text, out int asInt))
-            {
-                Log.Verbose("Font size changed");
-                Maker.TextFontSize = asInt;
-                FontSizeSlide.Value = asInt;
-                Refresh();
-            }
-            else
-                Log.Warning("Invalid input for font size. Not a number.");
+            //if (int.TryParse(FontSizeBox.Text, out int asInt))
+            //{
+            //    Log.Verbose("Font size changed");
+            //    Maker.TextFontSize = asInt;
+            //    FontSizeSlide.Value = asInt;
+            //    Refresh();
+            //}
+            //else
+            //    Log.Warning("Invalid input for font size. Not a number.");
 
             dontChange = false;
         }
 
-        private void QuoteOffsetXBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void QuoteOffsetXBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             dontChange = true;
-            if (int.TryParse(QuoteOffsetXBox.Text, out int asInt))
-            {
-                Log.Verbose("Quotes offset X changed");
-                Maker.QuotesOffsetX = asInt;
-                QuotesOffsetXSlide.Value = asInt;
-                Refresh();
-            }
-            else
-                Log.Warning("Invalid input for quotes offset X. Not a number.");
+            //if (int.TryParse(QuoteOffsetXBox.Text, out int asInt))
+            //{
+            //    Log.Verbose("Quotes offset X changed");
+            //    Maker.QuotesOffsetX = asInt;
+            //    QuotesOffsetXSlide.Value = asInt;
+            //    Refresh();
+            //}
+            //else
+            //    Log.Warning("Invalid input for quotes offset X. Not a number.");
 
             dontChange = false;
         }
 
-        private void QuoteOffsetYBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void QuoteOffsetYBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             dontChange = true;
-            if (int.TryParse(QuoteOffsetYBox.Text, out int asInt))
-            {
-                Log.Verbose("Quotes offset Y changed");
-                Maker.QuotesOffsetY = asInt;
-                QuotesOffsetYSlide.Value = asInt;
-                Refresh();
-            }
-            else
-                Log.Warning("Invalid input for quotes offset Y. Not a number.");
+            //if (int.TryParse(QuoteOffsetYBox.Text, out int asInt))
+            //{
+            //    Log.Verbose("Quotes offset Y changed");
+            //    Maker.QuotesOffsetY = asInt;
+            //    QuotesOffsetYSlide.Value = asInt;
+            //    Refresh();
+            //}
+            //else
+            //    Log.Warning("Invalid input for quotes offset Y. Not a number.");
 
             dontChange = false;
         }
 
-        private void SignatureOffsetXBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void SignatureOffsetXBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             dontChange = true;
-            if (int.TryParse(SignatureOffsetXBox.Text, out int asInt))
-            {
-                Log.Verbose("Signature offset X changed");
-                Maker.SignatureOffsetX = asInt;
-                SignatureOffsetXSlide.Value = asInt;
-                Refresh();
-            }
-            else
-                Log.Warning("Invalid input for signature offset X. Not a number.");
+            //if (int.TryParse(SignatureOffsetXBox.Text, out int asInt))
+            //{
+            //    Log.Verbose("Signature offset X changed");
+            //    Maker.SignatureOffsetX = asInt;
+            //    SignatureOffsetXSlide.Value = asInt;
+            //    Refresh();
+            //}
+            //else
+            //    Log.Warning("Invalid input for signature offset X. Not a number.");
 
             dontChange = false;
         }
 
-        private void SignatureOffsetYBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void SignatureOffsetYBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            dontChange = true;
-            if (int.TryParse(SignatureOffsetYBox.Text, out int asInt))
-            {
-                Log.Verbose("Signature offset Y changed");
-                Maker.SignatureOffsetY = asInt;
-                SignatureOffsetYSlide.Value = asInt;
-                Refresh();
-            }
-            else
-                Log.Warning("Invalid input for signature offset Y. Not a number.");
+            //dontChange = true;
+            //if (int.TryParse(SignatureOffsetYBox.Text, out int asInt))
+            //{
+            //    Log.Verbose("Signature offset Y changed");
+            //    Maker.SignatureOffsetY = asInt;
+            //    SignatureOffsetYSlide.Value = asInt;
+            //    Refresh();
+            //}
+            //else
+            //    Log.Warning("Invalid input for signature offset Y. Not a number.");
 
             dontChange = false;
         }
 
-        private void TextOffsetXBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void TextOffsetXBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             dontChange = true;
-            if (int.TryParse(TextOffsetXBox.Text, out int asInt))
-            {
-                Log.Verbose("Text offset X changed");
-                Maker.TextOffsetX = asInt;
-                TextOffsetXSlide.Value = asInt;
-                Refresh();
-            }
-            else
-                Log.Warning("Invalid input for text offset X. Not a number.");
+            //if (int.TryParse(TextOffsetXBox.Text, out int asInt))
+            //{
+            //    Log.Verbose("Text offset X changed");
+            //    Maker.TextOffsetX = asInt;
+            //    TextOffsetXSlide.Value = asInt;
+            //    Refresh();
+            //}
+            //else
+            //    Log.Warning("Invalid input for text offset X. Not a number.");
 
             dontChange = false;
         }
 
-        private void TextOffsetYBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void TextOffsetYBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             dontChange = true;
-            if (int.TryParse(TextOffsetYBox.Text, out int asInt))
-            {
-                Log.Verbose("Text offset Y changed");
-                Maker.TextOffsetY = asInt;
-                TextOffsetYSlide.Value = asInt;
-                Refresh();
-            }
-            else
-                Log.Warning("Invalid input for text offset Y. Not a number.");
+            //if (int.TryParse(TextOffsetYBox.Text, out int asInt))
+            //{
+            //    Log.Verbose("Text offset Y changed");
+            //    Maker.TextOffsetY = asInt;
+            //    TextOffsetYSlide.Value = asInt;
+            //    Refresh();
+            //}
+            //else
+            //    Log.Warning("Invalid input for text offset Y. Not a number.");
 
             dontChange = false;
         }

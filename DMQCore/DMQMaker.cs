@@ -22,16 +22,8 @@ namespace DMQCore
         {
             Log.Verbose("Invoke DMQMaker Constructor");
 
-            DefaultQuotes = quotes switch
-            {
-                null => LoadInternalImage("DMQCore.Materials.Quotes.png"),
-                _ => quotes,
-            };
-            DefaultSignature = signature switch
-            {
-                null => LoadInternalImage("DMQCore.Materials.Signature.png"),
-                _ => signature,
-            };
+            DefaultQuotes = quotes ?? LoadInternalImage("DMQCore.Materials.Quotes.png");
+            DefaultSignature = signature ?? LoadInternalImage("DMQCore.Materials.Signature.png");
             DefaultFont = LoadFont(null);
         }
 
@@ -92,42 +84,40 @@ namespace DMQCore
 
             Log.Debug("Making image");
 
-            var textOrigin = new System.Numerics.Vector2(paramz.ResolutionX / 2 * paramz.TextPaddingX, paramz.ResolutionY / 2 * paramz.TextPaddingY);
-            var textOptions = MakeTextOptions(fontFam, textOrigin, paramz);
-
-            //var dsaf = TextMeasurer.MeasureSize(Text, textOptions);
-            //if (dsaf.Height > 150)
-            //    textOptions = MakeTextOptions(1f, TextFontSize);
-            //else if (dsaf.Height < 90)
-            //    textOptions = MakeTextOptions(1.2f, TextFontSize + 3);
-
             var finalImage = new Image<Rgb24>(paramz.ResolutionX, paramz.ResolutionY);
 
-            var commonResizeOtions = new ResizeOptions() { Mode = ResizeMode.Pad, Position = AnchorPositionMode.TopLeft, PadColor = Color.White };
+            var commonResizeOtions = new ResizeOptions() { Mode = ResizeMode.Crop, Position = AnchorPositionMode.Top, PadColor = Color.White };
+
+            var textAreaOriginY = paramz.ResolutionY * (1 - paramz.TextAreaPercentage);
 
             var resImage = image.Clone((x) =>
             {
-                commonResizeOtions.Size = new Size(paramz.ResolutionX);
+                commonResizeOtions.Size = new Size(paramz.ResolutionX, (int)textAreaOriginY);
                 x.Resize(commonResizeOtions);
             });
             var resSignature = DefaultSignature.Clone((x) =>
             {
-                commonResizeOtions.Size = new Size((int)(paramz.ResolutionX / 5f * paramz.SignatureSize));
+                commonResizeOtions.Size = new Size((int)(paramz.ResolutionX / 6f * paramz.SignatureSize), 0);
                 x.Resize(commonResizeOtions);
             });
             var resQuotes = DefaultQuotes.Clone((x) =>
             {
-                commonResizeOtions.Size = new Size((int)(paramz.ResolutionX / 10f * paramz.QuotesSize));
+                commonResizeOtions.Size = new Size((int)(paramz.ResolutionX / 15f * paramz.QuotesSize), 0);
                 x.Resize(commonResizeOtions);
             });
+
+            var textOrigin = new System.Numerics.Vector2(paramz.ResolutionX / 2 + paramz.TextPaddingX, paramz.TextPaddingY + textAreaOriginY + (paramz.ResolutionY - textAreaOriginY) / 2 - resSignature.Height / 2);
+            var textOptions = MakeTextOptions(fontFam, textOrigin, paramz);
+
 
             var textMeasure = TextMeasurer.MeasureSize(text, textOptions);
 
             finalImage.Mutate((x) =>
             { x
                 .DrawImage(resImage, new Point(0, 0), 1f)
+                .Fill(Brushes.Solid(Color.White), new RectangleF(0, textAreaOriginY, paramz.ResolutionX, paramz.ResolutionY - textAreaOriginY))
                 .DrawText(textOptions, text, Color.Black)
-                .DrawImage(resQuotes, new Point((int)(paramz.ResolutionX / 2f - resQuotes.Width / 2f), (int)(paramz.ResolutionY * (1 - paramz.TextAreaPercentage) - resQuotes.Height / 2f)), 1f)
+                .DrawImage(resQuotes, new Point((int)(paramz.ResolutionX / 2f - resQuotes.Width / 2f), (int)(textAreaOriginY - resQuotes.Height / 2f)), 1f)
                 .DrawImage(resSignature, new Point((int)(paramz.ResolutionX / 2f - resSignature.Width / 2f), (int)(textOrigin.Y + textMeasure.Height)), 1f)
             ;});
 
@@ -136,7 +126,7 @@ namespace DMQCore
 
         private static RichTextOptions MakeTextOptions(FontFamily fontFamily, System.Numerics.Vector2 origin, DMQParams paramz)
         {
-            var font = fontFamily.CreateFont(paramz.TextSize);
+            var font = fontFamily.CreateFont(paramz.ResolutionX * 0.0012345f * paramz.TextSize);
             return new RichTextOptions(font)
                 {
                     Dpi = 72,
