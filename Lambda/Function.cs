@@ -10,7 +10,9 @@ using SixLabors.ImageSharp.Formats.Png;
 using System.Text;
 using System.Text.Json;
 
-var logConfig = new LoggerConfiguration().WriteTo.Console();
+var logConfig = new LoggerConfiguration()
+    .WriteTo.Console()
+    .MinimumLevel.Debug();
 Log.Logger = logConfig.CreateLogger();
 
 var apiError = (string errMsg) => new APIGatewayProxyResponse
@@ -39,7 +41,7 @@ var handler = (APIGatewayProxyRequest request, ILambdaContext context) =>
     }
 
     Log.Information("Incoming Text: " + input.Text);
-    Log.Information("Requested resolutions: " + input.Resolutions?.ToString());
+    Log.Information("Requested resolutions: " + JsonSerializer.Serialize(input.Resolutions));
 
     DMQParams paramz = new();
     DMQMaker maker = new();
@@ -53,7 +55,7 @@ var handler = (APIGatewayProxyRequest request, ILambdaContext context) =>
 
     foreach (var res in input.Resolutions ?? [[paramz.ResolutionX, paramz.ResolutionY]])
     {
-        Log.Information("Making resolution: " + res.ToString());
+        Log.Information($"Making resolution: {res[0]}x{res[1]}");
         if (res.Length != 2)
         {
             var err = $"Too many dimensions in resolutions, expected 2, received {res.Length}";
@@ -70,7 +72,7 @@ var handler = (APIGatewayProxyRequest request, ILambdaContext context) =>
         finalImage.Save(finalBytes, PngFormat.Instance);
         var result = Convert.ToBase64String(finalBytes.ToArray());
         results.Add($"image{res[0]}x{res[1]}Base64", result);
-        Log.Debug("finished " + res.ToString());
+        Log.Debug($"finished {res[0]}x{res[1]}");
     }
 
     Log.Debug("Serializing and sending response");
