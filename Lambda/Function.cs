@@ -25,10 +25,19 @@ var apiError = (string errMsg) => new APIGatewayProxyResponse
 
 var handler = (APIGatewayProxyRequest request, ILambdaContext context) =>
 {
-    string body = request.IsBase64Encoded
-        ? Encoding.UTF8.GetString(Convert.FromBase64String(request.Body))
-        : request.Body;
-    var input = JsonSerializer.Deserialize<Event>(body);
+    Event input;
+    try
+    {
+        string body = request.IsBase64Encoded
+            ? Encoding.UTF8.GetString(Convert.FromBase64String(request.Body))
+            : request.Body;
+        input = JsonSerializer.Deserialize<Event>(body);
+    }
+    catch (Exception e)
+    {
+        return apiError("Invalid request");
+    }
+
     Log.Information("Incoming Text: " + input.Text);
     Log.Information("Requested resolutions: " + input.Resolutions?.ToString());
 
