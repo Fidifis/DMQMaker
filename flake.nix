@@ -8,6 +8,7 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; config.allowUnfree = true; };
+        version = "1.0.0";
       in rec {
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
@@ -17,23 +18,35 @@
           ];
         };
         packages = {
-          default = packages.lambda;
+          default = packages.zipPackage;
           lambda = pkgs.buildDotnetModule {
             pname = "dmq-maker-lambda";
-            version = "1.0.0";
+            inherit version;
 
             src = ./.;
             nugetDeps = ./Lambda/deps.json;
             projectFile = "./Lambda/Lambda.csproj";
 
             buildType = "Release";
-            selfContainedBuild = false;
           };
           generate-deps = pkgs.writeShellScriptBin "generateDeps" ''
             git_root=$(git rev-parse --show-toplevel)
-            dotnet restore --packages $git_root/Lambda/packages $git_root/Lambda/Lambda.csproj
-            ${pkgs.nuget-to-json}/bin/nuget-to-json $git_root/Lambda/packages > $git_root/Lambda/deps.json
+            dotnet restore --packages "$git_root/Lambda/packages" "$git_root/Lambda/Lambda.csproj"
+            ${pkgs.nuget-to-json}/bin/nuget-to-json "$git_root/Lambda/packages" > "$git_root/Lambda/deps.json"
           '';
+          zipPackage = pkgs.stdenv.mkDerivation {
+            pname = "dmq-maker-lambda-zip";
+            inherit version;
+
+            src = packages.lambda;
+            buildInputs = [ pkgs.zip ];
+
+            phases = [ "installPhase" ];
+            installPhase = ''
+              mkdir -p "$out"
+              zip -r -j "$out/dmq-maker.zip" "$src/lib/dmq-maker-lambda"
+            '';
+          };
         };
       }
     );
