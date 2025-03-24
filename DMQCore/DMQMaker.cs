@@ -122,7 +122,7 @@ namespace DMQCore
                 .Fill(Brushes.Solid(Color.White), new RectangleF(0, textAreaOriginY, paramz.ResolutionX, paramz.ResolutionY - textAreaOriginY))
                 .DrawText(textOptions, text, Color.Black)
                 .DrawImage(resQuotes, new Point((int)(paramz.ResolutionX / 2f - resQuotes.Width / 2f), (int)(textAreaOriginY - resQuotes.Height / 2f)), 1f)
-                .DrawImage(resSignature, new Point((int)(paramz.ResolutionX / 2f - resSignature.Width / 2f), (int)(textOrigin.Y + textMeasure.Height + 20)), 1f)
+                .DrawImage(resSignature, new Point((int)(paramz.ResolutionX / 2f - resSignature.Width / 2f), (int)(textOrigin.Y + textMeasure.Height / 2 + 50 + paramz.SignatureOffsetY)), 1f)
             ;});
 
             return finalImage;

@@ -25,17 +25,17 @@
             <TextBox x:Name="FontSizeBox" Text="30" Height="30" VerticalAlignment="Top" Margin="114,180,0,0" TextChanged="FontSizeBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
 
             <Label Content="Quotes Size" HorizontalAlignment="Left" Margin="10,370,0,0" VerticalAlignment="Top"/>
-            <Slider x:Name="QuotesOffsetXSlide" Margin="169,377,10,0" VerticalAlignment="Top" ValueChanged="QuotesOffsetXSlide_ValueChanged" Maximum="1" LargeChange="0.1" SmallChange="0.01"/>
+            <Slider x:Name="QuotesOffsetXSlide" Margin="169,377,10,0" VerticalAlignment="Top" ValueChanged="QuotesOffsetXSlide_ValueChanged" Maximum="2" LargeChange="0.1" SmallChange="0.01"/>
             <TextBox x:Name="QuoteOffsetXBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,370,0,0" TextChanged="QuoteOffsetXBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
             <Label Content="Text area high" HorizontalAlignment="Left" Margin="10,400,0,0" VerticalAlignment="Top"/>
             <Slider x:Name="QuotesOffsetYSlide" Margin="169,408,10,0" VerticalAlignment="Top" ValueChanged="QuotesOffsetYSlide_ValueChanged" Maximum="1" LargeChange="0.1" SmallChange="0.01"/>
             <TextBox x:Name="QuoteOffsetYBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,400,0,0" TextChanged="QuoteOffsetYBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
 
             <Label Content="Signature Size" HorizontalAlignment="Left" Margin="8,305,0,0" VerticalAlignment="Top"/>
-            <Slider x:Name="SignatureOffsetXSlide" Margin="169,310,10,0" VerticalAlignment="Top" ValueChanged="SignatureOffsetXSlide_ValueChanged" Maximum="1" LargeChange="0.1" SmallChange="0.01"/>
+            <Slider x:Name="SignatureOffsetXSlide" Margin="169,310,10,0" VerticalAlignment="Top" ValueChanged="SignatureOffsetXSlide_ValueChanged" Maximum="2" LargeChange="0.1" SmallChange="0.01"/>
             <TextBox x:Name="SignatureOffsetXBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,304,0,0" TextChanged="SignatureOffsetXBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
             <Label Content="Signature Offset" HorizontalAlignment="Left" Margin="8,335,0,0" VerticalAlignment="Top"/>
-            <Slider x:Name="SignatureOffsetYSlide" Margin="169,341,10,0" VerticalAlignment="Top" ValueChanged="SignatureOffsetYSlide_ValueChanged" Maximum="1" LargeChange="0.1" SmallChange="0.01"/>
+            <Slider x:Name="SignatureOffsetYSlide" Margin="169,341,10,0" VerticalAlignment="Top" ValueChanged="SignatureOffsetYSlide_ValueChanged" Maximum="100" Minimum="-100"/>
             <TextBox x:Name="SignatureOffsetYBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,334,0,0" TextChanged="SignatureOffsetYBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
 
             <Label Content="Text Padding X" HorizontalAlignment="Left" Margin="10,241,0,0" VerticalAlignment="Top"/>
