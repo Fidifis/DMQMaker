@@ -49,7 +49,6 @@ var handler = (APIGatewayProxyRequest request, ILambdaContext context) =>
     Dictionary<string, string> results = new();
 
     Log.Debug("Decoding image");
-    using MemoryStream finalBytes = new();
     var imageBytes = Convert.FromBase64String(input.ImageBase64);
     var image = Image.Load(imageBytes);
 
@@ -69,6 +68,7 @@ var handler = (APIGatewayProxyRequest request, ILambdaContext context) =>
 
         var finalImage = maker.MakeImage(image, input.Text, paramsWithRes);
 
+        using MemoryStream finalBytes = new();
         finalImage.Save(finalBytes, PngFormat.Instance);
         var result = Convert.ToBase64String(finalBytes.ToArray());
         results.Add($"image{res[0]}x{res[1]}Base64", result);
