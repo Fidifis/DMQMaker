@@ -21,7 +21,10 @@ namespace DMQEditor
         private Image? finalImage;
 
         private string dmqText = "";
-        private DMQParams dmqParams = new();
+        private DMQParams dmqParams = new()
+        {
+            ResolutionY = 1350
+        };
 
         string imageDiractory = "";
         string imageName = "";
@@ -62,6 +65,7 @@ namespace DMQEditor
 
             dontChange = true;
             InitializeComponent();
+            InitValues();
             dontChange = false;
 
             List<string> systemFonts = ["", .. DMQMaker.GetFonts()];
@@ -92,6 +96,30 @@ namespace DMQEditor
                 _ => logConfig.MinimumLevel.Debug(),
             };
             Log.Logger = logConfig.CreateLogger();
+        }
+
+        private void InitValues()
+        {
+            FontSizeBox.Text = dmqParams.TextSize.ToString();
+            FontSizeSlide.Value = dmqParams.TextSize;
+
+            QuoteOffsetXBox.Text = dmqParams.QuotesSize.ToString();
+            QuotesOffsetXSlide.Value = dmqParams.QuotesSize;
+
+            QuoteOffsetYBox.Text = dmqParams.TextAreaPercentage.ToString();
+            QuotesOffsetYSlide.Value = dmqParams.TextAreaPercentage;
+
+            SignatureOffsetXBox.Text = dmqParams.SignatureSize.ToString();
+            SignatureOffsetXSlide.Value = dmqParams.SignatureSize;
+
+            SignatureOffsetYBox.Text = dmqParams.SignatureOffsetY.ToString();
+            SignatureOffsetYSlide.Value = dmqParams.SignatureOffsetY;
+
+            TextOffsetXBox.Text = dmqParams.TextPaddingX.ToString();
+            TextOffsetXSlide.Value = dmqParams.TextPaddingX;
+
+            TextOffsetYBox.Text = dmqParams.TextPaddingY.ToString();
+            TextOffsetYSlide.Value = dmqParams.TextPaddingY;
         }
 
         private void OpenBtn_Click(object sender, RoutedEventArgs e)
@@ -235,7 +263,7 @@ namespace DMQEditor
             if (dontChange)
                 return;
 
-            QuoteOffsetXBox.Text = ((int)QuotesOffsetXSlide.Value).ToString();
+            QuoteOffsetXBox.Text = (QuotesOffsetXSlide.Value).ToString();
             Refresh();
         }
 
@@ -244,7 +272,7 @@ namespace DMQEditor
             if (dontChange)
                 return;
 
-            QuoteOffsetYBox.Text = ((int)QuotesOffsetYSlide.Value).ToString();
+            QuoteOffsetYBox.Text = QuotesOffsetYSlide.Value.ToString();
             Refresh();
         }
 
@@ -253,7 +281,7 @@ namespace DMQEditor
             if (dontChange)
                 return;
 
-            SignatureOffsetXBox.Text = ((int)SignatureOffsetXSlide.Value).ToString();
+            SignatureOffsetXBox.Text = (SignatureOffsetXSlide.Value).ToString();
             Refresh();
         }
 
@@ -262,7 +290,7 @@ namespace DMQEditor
             if (dontChange)
                 return;
 
-            SignatureOffsetYBox.Text = ((int)SignatureOffsetYSlide.Value).ToString();
+            SignatureOffsetYBox.Text = (SignatureOffsetYSlide.Value).ToString();
             Refresh();
         }
 
@@ -271,7 +299,7 @@ namespace DMQEditor
             if (dontChange)
                 return;
 
-            TextOffsetXBox.Text = ((int)TextOffsetXSlide.Value).ToString();
+            TextOffsetXBox.Text = (TextOffsetXSlide.Value).ToString();
             Refresh();
         }
 
@@ -280,12 +308,15 @@ namespace DMQEditor
             if (dontChange)
                 return;
 
-            TextOffsetYBox.Text = ((int)TextOffsetYSlide.Value).ToString();
+            TextOffsetYBox.Text = (TextOffsetYSlide.Value).ToString();
             Refresh();
         }
 
         private void FontSizeBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
+            if (dontChange)
+                return;
+
             dontChange = true;
             if (int.TryParse(FontSizeBox.Text, out int asInt))
             {
@@ -302,22 +333,28 @@ namespace DMQEditor
 
         private void QuoteOffsetXBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
+            if (dontChange)
+                return;
+
             dontChange = true;
-            //if (int.TryParse(QuoteOffsetXBox.Text, out int asInt))
-            //{
-            //    Log.Verbose("Quotes offset X changed");
-            //    Maker.QuotesOffsetX = asInt;
-            //    QuotesOffsetXSlide.Value = asInt;
-            //    Refresh();
-            //}
-            //else
-            //    Log.Warning("Invalid input for quotes offset X. Not a number.");
+            if (float.TryParse(QuoteOffsetXBox.Text, out float asFloat))
+            {
+                Log.Verbose("Quotes offset X changed");
+                dmqParams.QuotesSize = asFloat;
+                QuotesOffsetXSlide.Value = asFloat;
+                Refresh();
+            }
+            else
+                Log.Warning("Invalid input for quotes offset X. Not a number.");
 
             dontChange = false;
         }
 
         private void QuoteOffsetYBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
+            if (dontChange)
+                return;
+
             dontChange = true;
             if (float.TryParse(QuoteOffsetYBox.Text, out float asFloat))
             {
@@ -334,64 +371,76 @@ namespace DMQEditor
 
         private void SignatureOffsetXBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
+            if (dontChange)
+                return;
+
             dontChange = true;
-            //if (int.TryParse(SignatureOffsetXBox.Text, out int asInt))
-            //{
-            //    Log.Verbose("Signature offset X changed");
-            //    Maker.SignatureOffsetX = asInt;
-            //    SignatureOffsetXSlide.Value = asInt;
-            //    Refresh();
-            //}
-            //else
-            //    Log.Warning("Invalid input for signature offset X. Not a number.");
+            if (float.TryParse(SignatureOffsetXBox.Text, out float asFloat))
+            {
+                Log.Verbose("Signature offset X changed");
+                dmqParams.SignatureSize = asFloat;
+                SignatureOffsetXSlide.Value = asFloat;
+                Refresh();
+            }
+            else
+                Log.Warning("Invalid input for signature offset X. Not a number.");
 
             dontChange = false;
         }
 
         private void SignatureOffsetYBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            //dontChange = true;
-            //if (int.TryParse(SignatureOffsetYBox.Text, out int asInt))
-            //{
-            //    Log.Verbose("Signature offset Y changed");
-            //    Maker.SignatureOffsetY = asInt;
-            //    SignatureOffsetYSlide.Value = asInt;
-            //    Refresh();
-            //}
-            //else
-            //    Log.Warning("Invalid input for signature offset Y. Not a number.");
+            if (dontChange)
+                return;
+
+            dontChange = true;
+            if (float.TryParse(SignatureOffsetYBox.Text, out float asFloat))
+            {
+                Log.Verbose("Signature offset Y changed");
+                dmqParams.SignatureOffsetY = asFloat;
+                SignatureOffsetYSlide.Value = asFloat;
+                Refresh();
+            }
+            else
+                Log.Warning("Invalid input for signature offset Y. Not a number.");
 
             dontChange = false;
         }
 
         private void TextOffsetXBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
+            if (dontChange)
+                return;
+
             dontChange = true;
-            //if (int.TryParse(TextOffsetXBox.Text, out int asInt))
-            //{
-            //    Log.Verbose("Text offset X changed");
-            //    Maker.TextOffsetX = asInt;
-            //    TextOffsetXSlide.Value = asInt;
-            //    Refresh();
-            //}
-            //else
-            //    Log.Warning("Invalid input for text offset X. Not a number.");
+            if (float.TryParse(TextOffsetXBox.Text, out float asFloat))
+            {
+                Log.Verbose("Text offset X changed");
+                dmqParams.TextPaddingX = asFloat;
+                TextOffsetXSlide.Value = asFloat;
+                Refresh();
+            }
+            else
+                Log.Warning("Invalid input for text offset X. Not a number.");
 
             dontChange = false;
         }
 
         private void TextOffsetYBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
+            if (dontChange)
+                return;
+
             dontChange = true;
-            //if (int.TryParse(TextOffsetYBox.Text, out int asInt))
-            //{
-            //    Log.Verbose("Text offset Y changed");
-            //    Maker.TextOffsetY = asInt;
-            //    TextOffsetYSlide.Value = asInt;
-            //    Refresh();
-            //}
-            //else
-            //    Log.Warning("Invalid input for text offset Y. Not a number.");
+            if (float.TryParse(TextOffsetYBox.Text, out float asFloat))
+            {
+                Log.Verbose("Text offset Y changed");
+                dmqParams.TextOffsetY = asFloat;
+                TextOffsetYSlide.Value = asFloat;
+                Refresh();
+            }
+            else
+                Log.Warning("Invalid input for text offset Y. Not a number.");
 
             dontChange = false;
         }

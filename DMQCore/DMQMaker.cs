@@ -9,6 +9,7 @@ using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 
 namespace DMQCore
 {
@@ -83,12 +84,15 @@ namespace DMQCore
             FontFamily fontFam = LoadFont(font);
 
             Log.Debug("Making image");
+            Log.Debug(JsonSerializer.Serialize(paramz));
 
             var finalImage = new Image<Rgb24>(paramz.ResolutionX, paramz.ResolutionY);
 
             var commonResizeOtions = new ResizeOptions() { Mode = ResizeMode.Crop, Position = AnchorPositionMode.Top, PadColor = Color.White };
 
             var textAreaOriginY = paramz.ResolutionY * (1 - paramz.TextAreaPercentage);
+
+            Log.Debug($"textAreaOrigin {textAreaOriginY}");
 
             var resImage = image.Clone((x) =>
             {
@@ -142,6 +146,7 @@ namespace DMQCore
 
         public void Dispose()
         {
+            Log.Verbose("DMQMaker disposed");
             DefaultQuotes.Dispose();
             DefaultSignature.Dispose();
         }
