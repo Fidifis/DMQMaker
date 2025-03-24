@@ -1,4 +1,4 @@
-﻿using DMQCore;
+using DMQCore;
 using Microsoft.Win32;
 using Serilog;
 using SixLabors.ImageSharp;

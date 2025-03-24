@@ -1,4 +1,4 @@
-﻿namespace DMQCore
+namespace DMQCore
 {
     public struct DMQParams
     {

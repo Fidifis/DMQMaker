@@ -1,4 +1,4 @@
-﻿namespace Lambda
+namespace Lambda
 {
     public struct Event
     {

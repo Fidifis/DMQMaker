@@ -1,4 +1,4 @@
-﻿using Serilog;
+using Serilog;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
