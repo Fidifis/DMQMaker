@@ -29,8 +29,8 @@ jobs:
 
     - name: Rename files
       run: |
-        cp .\DMQEditor\bin\Release\net7.0-windows\win-x64\publish\DMQEditor.exe DMQEditor-x64.exe
-        cp .\DMQEditor\bin\Standalone\net7.0-windows\win-x64\publish\DMQEditor.exe DMQEditor-x64-Standalone.exe
+        cp .\DMQEditor\bin\Release\net8.0-windows\win-x64\publish\DMQEditor.exe DMQEditor-x64.exe
+        cp .\DMQEditor\bin\Standalone\net8.0-windows\win-x64\publish\DMQEditor.exe DMQEditor-x64-Standalone.exe
 
     - name: Release
       uses: softprops/action-gh-release@v0.1.15
