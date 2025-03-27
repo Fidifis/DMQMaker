@@ -32,7 +32,7 @@
             <TextBox x:Name="QuoteOffsetYBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,400,0,0" TextChanged="QuoteOffsetYBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
 
             <Label Content="Signature Size" HorizontalAlignment="Left" Margin="8,305,0,0" VerticalAlignment="Top"/>
-            <Slider x:Name="SignatureOffsetXSlide" Margin="169,310,10,0" VerticalAlignment="Top" ValueChanged="SignatureOffsetXSlide_ValueChanged" Maximum="2" LargeChange="0.1" SmallChange="0.01"/>
+            <Slider x:Name="SignatureOffsetXSlide" Margin="169,310,10,0" VerticalAlignment="Top" ValueChanged="SignatureOffsetXSlide_ValueChanged" Maximum="2" Minimum="0.01" LargeChange="0.1" SmallChange="0.01"/>
             <TextBox x:Name="SignatureOffsetXBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,304,0,0" TextChanged="SignatureOffsetXBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
             <Label Content="Signature Offset" HorizontalAlignment="Left" Margin="8,335,0,0" VerticalAlignment="Top"/>
             <Slider x:Name="SignatureOffsetYSlide" Margin="169,341,10,0" VerticalAlignment="Top" ValueChanged="SignatureOffsetYSlide_ValueChanged" Maximum="100" Minimum="-100"/>

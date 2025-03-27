@@ -101,12 +101,12 @@ namespace DMQCore
             });
             var resSignature = DefaultSignature.Clone((x) =>
             {
-                commonResizeOtions.Size = new Size((int)(paramz.ResolutionX / 6f * paramz.SignatureSize), 0);
+                commonResizeOtions.Size = new Size((int)(paramz.ResolutionY / 6f * paramz.SignatureSize), 0);
                 x.Resize(commonResizeOtions);
             });
             var resQuotes = DefaultQuotes.Clone((x) =>
             {
-                commonResizeOtions.Size = new Size((int)(paramz.ResolutionX / 10f * paramz.QuotesSize), 0);
+                commonResizeOtions.Size = new Size((int)(paramz.ResolutionY / 10f * paramz.QuotesSize), 0);
                 x.Resize(commonResizeOtions);
             });
 
@@ -130,7 +130,7 @@ namespace DMQCore
 
         private static RichTextOptions MakeTextOptions(FontFamily fontFamily, System.Numerics.Vector2 origin, DMQParams paramz)
         {
-            var font = fontFamily.CreateFont(paramz.ResolutionX * 0.0012345f * paramz.TextSize);
+            var font = fontFamily.CreateFont(paramz.ResolutionY * 0.0012345f * paramz.TextSize);
             return new RichTextOptions(font)
                 {
                     Dpi = 72,

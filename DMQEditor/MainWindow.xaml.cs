@@ -181,7 +181,7 @@ namespace DMQEditor
         private void InputText_Changed(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             Log.Verbose("Text changed");
-            dmqText = InputText.Text;
+            dmqText = InputText.Text == "" ? " " : InputText.Text;
             Refresh();
         }
 
