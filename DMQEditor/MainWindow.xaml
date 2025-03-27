@@ -25,7 +25,7 @@
             <TextBox x:Name="FontSizeBox" Text="30" Height="30" VerticalAlignment="Top" Margin="114,180,0,0" TextChanged="FontSizeBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
 
             <Label Content="Quotes Size" HorizontalAlignment="Left" Margin="10,370,0,0" VerticalAlignment="Top"/>
-            <Slider x:Name="QuotesOffsetXSlide" Margin="169,377,10,0" VerticalAlignment="Top" ValueChanged="QuotesOffsetXSlide_ValueChanged" Maximum="2" LargeChange="0.1" SmallChange="0.01"/>
+            <Slider x:Name="QuotesOffsetXSlide" Margin="169,377,10,0" VerticalAlignment="Top" ValueChanged="QuotesOffsetXSlide_ValueChanged" Maximum="2" Minimum="0.01" LargeChange="0.1" SmallChange="0.01"/>
             <TextBox x:Name="QuoteOffsetXBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,370,0,0" TextChanged="QuoteOffsetXBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
             <Label Content="Text area high" HorizontalAlignment="Left" Margin="10,400,0,0" VerticalAlignment="Top"/>
             <Slider x:Name="QuotesOffsetYSlide" Margin="169,408,10,0" VerticalAlignment="Top" ValueChanged="QuotesOffsetYSlide_ValueChanged" Maximum="1" LargeChange="0.1" SmallChange="0.01"/>
@@ -41,9 +41,15 @@
             <Label Content="Text Padding X" HorizontalAlignment="Left" Margin="10,241,0,0" VerticalAlignment="Top"/>
             <Slider x:Name="TextOffsetXSlide" Margin="169,246,10,0" VerticalAlignment="Top" ValueChanged="TextOffsetXSlide_ValueChanged" Maximum="1" LargeChange="0.1" SmallChange="0.01"/>
             <TextBox x:Name="TextOffsetXBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,239,0,0" TextChanged="TextOffsetXBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
-            <Label Content="Text Padding Y" HorizontalAlignment="Left" Margin="10,271,0,0" VerticalAlignment="Top"/>
-            <Slider x:Name="TextOffsetYSlide" Margin="169,277,10,0" VerticalAlignment="Top" ValueChanged="TextOffsetYSlide_ValueChanged" Maximum="1" LargeChange="0.1" SmallChange="0.01"/>
+            <Label Content="Text Offset Y" HorizontalAlignment="Left" Margin="10,271,0,0" VerticalAlignment="Top"/>
+            <Slider x:Name="TextOffsetYSlide" Margin="169,277,10,0" VerticalAlignment="Top" ValueChanged="TextOffsetYSlide_ValueChanged" Maximum="100" Minimum="-100" LargeChange="1" SmallChange="0.1"/>
             <TextBox x:Name="TextOffsetYBox" Text="0" Height="30" VerticalAlignment="Top" Margin="114,269,0,0" TextChanged="TextOffsetYBox_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
+
+            <Label Content="Resolution" HorizontalAlignment="Left" Margin="10,500,0,0" VerticalAlignment="Top"/>
+            <TextBox x:Name="TextResolutionX" Text="1080" Height="30" VerticalAlignment="Top" Margin="114,496,0,0" TextChanged="TextResolutionX_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
+            <TextBox x:Name="TextResolutionY" Text="1080" Height="30" VerticalAlignment="Top" Margin="164,496,0,0" TextChanged="TextResolutionY_TextChanged" HorizontalAlignment="Left" Width="40" VerticalContentAlignment="Center" TextAlignment="Center" MaxLines="1"/>
+            <Button x:Name="BtnSetResolutionSquare" Content="square" Margin="218,496,0,0" Height="30" VerticalAlignment="Top" Click="SetSquareBtn_click" HorizontalAlignment="Left" Width="42"/>
+            <Button x:Name="BtnSetResolutionVertical" Content="vertical" Margin="269,496,0,0" Height="30" VerticalAlignment="Top" Click="SetVerticalBtn_click" HorizontalAlignment="Left" Width="42"/>
 
             <Button x:Name="SaveBtn" Content="Save" Margin="0,0,30,21" Height="30" VerticalAlignment="Bottom" Click="SaveBtn_Click" HorizontalAlignment="Right" Width="100"/>
             <Button x:Name="OpenBtn" Content="Open" Margin="30,0,0,21" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="100" Click="OpenBtn_Click"/>

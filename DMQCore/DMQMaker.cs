@@ -110,7 +110,7 @@ namespace DMQCore
                 x.Resize(commonResizeOtions);
             });
 
-            var textOrigin = new System.Numerics.Vector2(paramz.ResolutionX / 2 + paramz.TextPaddingX, paramz.TextPaddingY + textAreaOriginY + (paramz.ResolutionY - textAreaOriginY) / 2 - resSignature.Height / 2);
+            var textOrigin = new System.Numerics.Vector2(paramz.ResolutionX / 2 + paramz.TextPaddingX, paramz.TextOffsetY + textAreaOriginY + (paramz.ResolutionY - textAreaOriginY) / 2 - resSignature.Height / 2);
             var textOptions = MakeTextOptions(fontFam, textOrigin, paramz);
 
 

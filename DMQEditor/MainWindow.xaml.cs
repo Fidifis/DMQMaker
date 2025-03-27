@@ -21,10 +21,7 @@ namespace DMQEditor
         private Image? finalImage;
 
         private string dmqText = "";
-        private DMQParams dmqParams = new()
-        {
-            ResolutionY = 1350
-        };
+        private DMQParams dmqParams = new();
 
         string imageDiractory = "";
         string imageName = "";
@@ -118,8 +115,11 @@ namespace DMQEditor
             TextOffsetXBox.Text = dmqParams.TextPaddingX.ToString();
             TextOffsetXSlide.Value = dmqParams.TextPaddingX;
 
-            TextOffsetYBox.Text = dmqParams.TextPaddingY.ToString();
-            TextOffsetYSlide.Value = dmqParams.TextPaddingY;
+            TextOffsetYBox.Text = dmqParams.TextOffsetY.ToString();
+            TextOffsetYSlide.Value = dmqParams.TextOffsetY;
+
+            TextResolutionX.Text = dmqParams.ResolutionX.ToString();
+            TextResolutionY.Text = dmqParams.ResolutionY.ToString();
         }
 
         private void OpenBtn_Click(object sender, RoutedEventArgs e)
@@ -443,6 +443,53 @@ namespace DMQEditor
                 Log.Warning("Invalid input for text offset Y. Not a number.");
 
             dontChange = false;
+        }
+
+        private void TextResolutionX_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if (dontChange)
+                return;
+
+            dontChange = true;
+            if (int.TryParse(TextResolutionX.Text, out int asInt) && asInt > 0)
+            {
+                Log.Verbose("Text Resolution X changed");
+                dmqParams.ResolutionX = asInt;
+                Refresh();
+            }
+            else
+                Log.Warning("Invalid input for text resolution X. Not a valid number.");
+
+            dontChange = false;
+        }
+
+        private void TextResolutionY_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if (dontChange)
+                return;
+
+            dontChange = true;
+            if (int.TryParse(TextResolutionY.Text, out int asInt) && asInt > 0)
+            {
+                Log.Verbose("Text Resolution Y changed");
+                dmqParams.ResolutionY = asInt;
+                Refresh();
+            }
+            else
+                Log.Warning("Invalid input for text resolution Y. Not a valid number.");
+
+            dontChange = false;
+        }
+
+        private void SetSquareBtn_click(object sender, RoutedEventArgs e)
+        {
+            TextResolutionX.Text = "1080";
+            TextResolutionY.Text = "1080";
+        }
+        private void SetVerticalBtn_click(object sender, RoutedEventArgs e)
+        {
+            TextResolutionX.Text = "1080";
+            TextResolutionY.Text = "1380";
         }
     }
 }
