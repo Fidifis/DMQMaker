@@ -6,6 +6,7 @@ using SixLabors.ImageSharp.Formats.Png;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -15,6 +16,7 @@ namespace DMQEditor
     public partial class MainWindow : Window
     {
         private readonly object threadSync = new();
+        private CancellationTokenSource refreshCts = new();
         private DMQMaker Maker;
 
         private Image? image;
@@ -226,20 +228,32 @@ namespace DMQEditor
             finalImage = Maker.MakeImage(image, dmqText, dmqParams, font);
         }
 
+
         private void Refresh()
         {
             if (hasChanged)
                 return;
             hasChanged = true;
+
+            refreshCts.Cancel();
+            refreshCts = new CancellationTokenSource();
+            var token = refreshCts.Token;
+
             Task.Run(() =>
             {
+                if (token.IsCancellationRequested)
+                    return;
+
                 lock (threadSync)
                 {
+                    if (token.IsCancellationRequested)
+                        return;
+
                     hasChanged = false;
                     MakeImage();
                     UpdatePreview();
                 }
-            });
+            }, token);
         }
 
         private void FontsDropdown_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
