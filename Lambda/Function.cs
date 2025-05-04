@@ -1,87 +1,73 @@
-using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.Serialization.SystemTextJson;
 using DMQCore;
 using Lambda;
+using Amazon.S3;
+using Amazon.S3.Model;
 using Serilog;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
-using System.Text;
-using System.Text.Json;
 
 var logConfig = new LoggerConfiguration()
     .WriteTo.Console()
     .MinimumLevel.Debug();
 Log.Logger = logConfig.CreateLogger();
 
-var apiError = (string errMsg) => new APIGatewayProxyResponse
-{
-    StatusCode = 400,
-    Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
-    Body = JsonSerializer.Serialize(new
-    {
-        error = errMsg
-    }),
-};
+var s3Client = new AmazonS3Client();
 
-var handler = (APIGatewayProxyRequest request, ILambdaContext context) =>
+var handler = async (Event input, ILambdaContext context) =>
 {
-    Event input;
-    try
-    {
-        string body = request.IsBase64Encoded
-            ? Encoding.UTF8.GetString(Convert.FromBase64String(request.Body))
-            : request.Body;
-        input = JsonSerializer.Deserialize<Event>(body);
-    }
-    catch (Exception e)
-    {
-        return apiError("Invalid request");
-    }
-
-    Log.Information("Incoming Text: " + input.Text);
-    Log.Information("Requested resolutions: " + JsonSerializer.Serialize(input.Resolutions));
+    Log.Information("Incoming Text: " + input.text);
 
     DMQParams paramz = new();
     DMQMaker maker = new();
 
-    Dictionary<string, string> results = new();
+    Log.Debug("Downloading image");
 
-    Log.Debug("Decoding image");
-    var imageBytes = Convert.FromBase64String(input.ImageBase64);
-    var image = Image.Load(imageBytes);
-
-    foreach (var res in input.Resolutions ?? [[paramz.ResolutionX, paramz.ResolutionY]])
+    var request = new GetObjectRequest
     {
-        Log.Information($"Making resolution: {res[0]}x{res[1]}");
-        if (res.Length != 2)
-        {
-            var err = $"Too many dimensions in resolutions, expected 2, received {res.Length}";
-            Log.Error(err);
-            return apiError(err);
-        }
-
-        var paramsWithRes = paramz;
-        paramsWithRes.ResolutionX = res[0];
-        paramsWithRes.ResolutionY = res[1];
-
-        var finalImage = maker.MakeImage(image, input.Text, paramsWithRes);
-
-        using MemoryStream finalBytes = new();
-        finalImage.Save(finalBytes, PngFormat.Instance);
-        var result = Convert.ToBase64String(finalBytes.ToArray());
-        results.Add($"image{res[0]}x{res[1]}Base64", result);
-        Log.Debug($"finished {res[0]}x{res[1]}");
-    }
-
-    Log.Debug("Serializing and sending response");
-    return new APIGatewayProxyResponse
-    {
-        StatusCode = 200,
-        Headers = new Dictionary<string, string> {{"Content-Type", "application/json"}},
-        Body = JsonSerializer.Serialize(results),
+        BucketName = input.s3Bucket,
+        Key = input.s3Key,
     };
+
+    using var response = await s3Client.GetObjectAsync(request);
+    using Stream responseStream = response.ResponseStream;
+
+    using var image = Image.Load(response.ResponseStream);
+
+    var res = input.resolution ?? [paramz.ResolutionX, paramz.ResolutionY];
+
+    if (res.Length != 2)
+    {
+        var err = $"Too many dimensions in resolutions, expected 2, received {res.Length}";
+        Log.Error(err);
+        throw new ArgumentException(err);
+    }
+    Log.Information($"Making resolution: {res[0]}x{res[1]}");
+
+    var paramsWithRes = paramz;
+    paramsWithRes.ResolutionX = res[0];
+    paramsWithRes.ResolutionY = res[1];
+
+    var finalImage = maker.MakeImage(image, input.text, paramsWithRes);
+
+    using var outputStream = new MemoryStream();
+    finalImage.Save(outputStream, PngFormat.Instance);
+    
+    Log.Debug($"finished {res[0]}x{res[1]}");
+
+    Log.Debug("Saving to S3");
+    outputStream.Position = 0;
+
+    var putRequest = new PutObjectRequest
+    {
+        BucketName = input.s3Bucket,
+        Key = input.resultS3Key,
+        InputStream = outputStream,
+    };
+
+    await s3Client.PutObjectAsync(putRequest);
 };
 
 await LambdaBootstrapBuilder.Create(handler, new DefaultLambdaJsonSerializer())

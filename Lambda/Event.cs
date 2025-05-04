@@ -2,8 +2,10 @@ namespace Lambda
 {
     public struct Event
     {
-        public string ImageBase64 { get; set; }
-        public string Text { get; set; }
-        public int[][]? Resolutions { get; set; }
+        public string text { get; set; }
+        public string s3Bucket { get; set; }
+        public string s3Key { get; set; }
+        public string resultS3Key { get; set; }
+        public int[] resolution { get; set; }
     }
 }
