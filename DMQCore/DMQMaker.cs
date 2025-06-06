@@ -50,7 +50,6 @@ namespace DMQCore
               return collection.Add(font.Value.FontFilePath);
             }
 
-            Log.Debug("Loading system font " + (font.HasValue ? font.Value.FontName : "(no font specified)"));
             FontFamily fontFamily;
             if (!font.HasValue || font.Value.UseBuildIn || font.Value.FontName == null || !SystemFonts.TryGet(font.Value.FontName, out fontFamily))
             {
