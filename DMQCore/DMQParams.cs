@@ -15,4 +15,13 @@ namespace DMQCore
 
         public DMQParams() { }
     }
+
+    public record struct FontParam
+    {
+      public bool UseBuildIn { get; set; } = true;
+      public string? FontFilePath { get; set; }
+      public string? FontName { get; set; }
+
+      public FontParam() {}
+    }
 }

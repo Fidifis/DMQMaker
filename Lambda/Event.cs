@@ -7,5 +7,7 @@ namespace Lambda
         public string s3Key { get; set; }
         public string resultS3Key { get; set; }
         public int[] resolution { get; set; }
+        public string? fontS3Bucket { get; set; }
+        public string? fontS3Key { get; set; }
     }
 }

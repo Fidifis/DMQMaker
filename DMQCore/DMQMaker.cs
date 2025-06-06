@@ -25,7 +25,7 @@ namespace DMQCore
 
             DefaultQuotes = quotes ?? LoadInternalImage("DMQCore.Materials.Quotes.png");
             DefaultSignature = signature ?? LoadInternalImage("DMQCore.Materials.Signature.png");
-            DefaultFont = LoadFont(null);
+            DefaultFont = LoadFont(new FontParam());
         }
 
         private static Image LoadInternalImage(string internalPath)
@@ -42,22 +42,35 @@ namespace DMQCore
             return Image.Load(quotesStream);
         }
 
-        private static FontFamily LoadFont(string? fontName)
+        private static FontFamily LoadFont(FontParam? font)
         {
-            Log.Debug("Loading font " + fontName);
-            if (fontName == null || !SystemFonts.TryGet(fontName, out FontFamily fontFamily))
+            if (font.HasValue && font.Value.FontFilePath != null) {
+              Log.Debug($"Loading font from {font.Value.FontFilePath}");
+              FontCollection collection = new();
+              return collection.Add(font.Value.FontFilePath);
+            }
+
+            Log.Debug("Loading system font " + (font.HasValue ? font.Value.FontName : "(no font specified)"));
+            FontFamily fontFamily;
+            if (!font.HasValue || font.Value.UseBuildIn || font.Value.FontName == null || !SystemFonts.TryGet(font.Value.FontName, out fontFamily))
             {
-                if (fontName != null) Log.Error($"Couldn't find font {fontName}. Default font is used instead.");
+                if (font.HasValue && !font.Value.UseBuildIn)
+                  Log.Error($"Couldn't find font {font.Value.FontName ?? "(no font specified)"}. Default font is used instead.");
+                Log.Debug("Loading built-in font");
+
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 using Stream? fontStream = assembly.GetManifestResourceStream("DMQCore.Materials.Merriweather.ttf");
                 FontCollection collection = new();
                 if (fontStream == null)
                 {
                     const string msg = "Cannot get default font";
-                    Log.Fatal(msg);
+                    Log.Error(msg);
                     throw new FileLoadException(msg);
                 }
                 fontFamily = collection.Add(fontStream);
+            }
+            else {
+              throw new Exception("No font loaded. This should never happen");
             }
             return fontFamily;
         }
@@ -72,7 +85,7 @@ namespace DMQCore
             return result;
         }
 
-        public Image MakeImage(Image image, string text, DMQParams paramz, string? font = null)
+        public Image MakeImage(Image image, string text, DMQParams paramz, FontParam? font = null)
         {
             if (text.Length == 0)
             {

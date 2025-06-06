@@ -16,12 +16,42 @@ Log.Logger = logConfig.CreateLogger();
 
 var s3Client = new AmazonS3Client();
 
+var downloadFont = async (string s3Bucket, string s3Key, string localFilePath) =>
+{
+    var request = new GetObjectRequest
+    {
+        BucketName = s3Bucket,
+        Key = s3Key,
+    };
+
+    using var response = await s3Client.GetObjectAsync(request);
+    using var responseStream = response.ResponseStream;
+    using var fileStream = File.Create(localFilePath);
+    await responseStream.CopyToAsync(fileStream);
+};
+
 var handler = async (Event input, ILambdaContext context) =>
 {
     Log.Information("Incoming Text: " + input.text);
 
     DMQParams paramz = new();
     DMQMaker maker = new();
+    FontParam? dmqFont = null;
+
+    if (input.fontS3Key != null) {
+      Log.Debug($"Downloading font file {input.fontS3Key}");
+      if (input.fontS3Bucket == null) {
+        var err = $"fontS3Bucket not specified. Both fontS3Bucket and fontS3Key must be specified.";
+        Log.Error(err);
+        throw new ArgumentException(err);
+      }
+      var tempFontPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+      await downloadFont(input.fontS3Bucket, input.fontS3Key, tempFontPath);
+      dmqFont = new() {
+        UseBuildIn = false,
+        FontFilePath = tempFontPath,
+      };
+    }
 
     Log.Debug("Downloading image");
 
@@ -50,7 +80,7 @@ var handler = async (Event input, ILambdaContext context) =>
     paramsWithRes.ResolutionX = res[0];
     paramsWithRes.ResolutionY = res[1];
 
-    var finalImage = maker.MakeImage(image, input.text, paramsWithRes);
+    var finalImage = maker.MakeImage(image, input.text, paramsWithRes, dmqFont);
 
     using var outputStream = new MemoryStream();
     finalImage.Save(outputStream, PngFormat.Instance);
