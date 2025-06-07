@@ -86,7 +86,7 @@ namespace DMQCore
 
         public Image MakeImage(Image image, string text, DMQParams paramz, FontParam? font = null)
         {
-            if (text.Length == 0)
+            if (string.IsNullOrEmpty(text))
             {
                 string msg = $"Given text is empty";
                 Log.Fatal(msg);
@@ -100,42 +100,66 @@ namespace DMQCore
 
             var finalImage = new Image<Rgb24>(paramz.ResolutionX, paramz.ResolutionY);
 
-            var commonResizeOtions = new ResizeOptions() { Mode = ResizeMode.Crop, Position = AnchorPositionMode.Top, PadColor = Color.White };
+            var commonResizeOptions = new ResizeOptions
+            {
+                Mode = ResizeMode.Crop,
+                Position = AnchorPositionMode.Top,
+                PadColor = Color.White
+            };
 
             var textAreaOriginY = paramz.ResolutionY * (1 - paramz.TextAreaPercentage);
-
             Log.Debug($"textAreaOrigin {textAreaOriginY}");
 
-            var resImage = image.Clone((x) =>
+            var resImage = image.Clone(x =>
             {
-                commonResizeOtions.Size = new Size(paramz.ResolutionX, (int)textAreaOriginY);
-                x.Resize(commonResizeOtions);
-            });
-            var resSignature = DefaultSignature.Clone((x) =>
-            {
-                commonResizeOtions.Size = new Size((int)(paramz.ResolutionY / 6f * paramz.SignatureSize), 0);
-                x.Resize(commonResizeOtions);
-            });
-            var resQuotes = DefaultQuotes.Clone((x) =>
-            {
-                commonResizeOtions.Size = new Size((int)(paramz.ResolutionY / 10f * paramz.QuotesSize), 0);
-                x.Resize(commonResizeOtions);
+                commonResizeOptions.Size = new Size(paramz.ResolutionX, (int)textAreaOriginY);
+                x.Resize(commonResizeOptions);
             });
 
-            var textOrigin = new System.Numerics.Vector2(paramz.ResolutionX / 2 + paramz.TextPaddingX, paramz.TextOffsetY + textAreaOriginY + (paramz.ResolutionY - textAreaOriginY) / 2 - resSignature.Height / 2);
+            var resSignature = DefaultSignature.Clone(x =>
+            {
+                commonResizeOptions.Size = new Size((int)(paramz.ResolutionY / 6f * paramz.SignatureSize), 0);
+                x.Resize(commonResizeOptions);
+            });
+
+            var resQuotes = DefaultQuotes.Clone(x =>
+            {
+                commonResizeOptions.Size = new Size((int)(paramz.ResolutionY / 10f * paramz.QuotesSize), 0);
+                x.Resize(commonResizeOptions);
+            });
+
+            var textOrigin = new System.Numerics.Vector2(
+                paramz.ResolutionX / 2 + paramz.TextPaddingX,
+                paramz.TextOffsetY + textAreaOriginY + (paramz.ResolutionY - textAreaOriginY) / 2 - resSignature.Height / 2
+            );
+
             var textOptions = MakeTextOptions(fontFam, textOrigin, paramz);
+            float maxTextWidth = paramz.ResolutionX - 2 * paramz.TextPaddingX;
+            float maxTextHeight = paramz.ResolutionY - textAreaOriginY - resSignature.Height - paramz.SignatureOffsetY - 50;
 
+            float scale = 1f;
+            FontRectangle textMeasure;
+            var paramResized = paramz;
 
-            var textMeasure = TextMeasurer.MeasureSize(text, textOptions);
+            do
+            {
+                paramResized.TextSize = (int)(paramz.TextSize * scale);
 
-            finalImage.Mutate((x) =>
-            { x
-                .DrawImage(resImage, new Point(0, 0), 1f)
-                .Fill(Brushes.Solid(Color.White), new RectangleF(0, textAreaOriginY, paramz.ResolutionX, paramz.ResolutionY - textAreaOriginY))
-                .DrawText(textOptions, text, Color.Black)
-                .DrawImage(resQuotes, new Point((int)(paramz.ResolutionX / 2f - resQuotes.Width / 2f), (int)(textAreaOriginY - resQuotes.Height / 2f)), 1f)
-                .DrawImage(resSignature, new Point((int)(paramz.ResolutionX / 2f - resSignature.Width / 2f), (int)(textOrigin.Y + textMeasure.Height / 2 + 50 + paramz.SignatureOffsetY)), 1f)
-            ;});
+                textOptions = MakeTextOptions(fontFam, textOrigin, paramResized);
+
+                textMeasure = TextMeasurer.MeasureSize(text, textOptions);
+                scale -= 0.05f;
+
+            } while ((textMeasure.Width > maxTextWidth || textMeasure.Height > maxTextHeight) && scale > 0.1f);
+
+            finalImage.Mutate(x =>
+            {
+                x.DrawImage(resImage, new Point(0, 0), 1f)
+                 .Fill(Brushes.Solid(Color.White), new RectangleF(0, textAreaOriginY, paramz.ResolutionX, paramz.ResolutionY - textAreaOriginY))
+                 .DrawText(textOptions, text, Color.Black)
+                 .DrawImage(resQuotes, new Point((int)(paramz.ResolutionX / 2f - resQuotes.Width / 2f), (int)(textAreaOriginY - resQuotes.Height / 2f)), 1f)
+                 .DrawImage(resSignature, new Point((int)(paramz.ResolutionX / 2f - resSignature.Width / 2f), (int)(textOrigin.Y + textMeasure.Height / 2 + 50 + paramz.SignatureOffsetY)), 1f);
+            });
 
             return finalImage;
         }
