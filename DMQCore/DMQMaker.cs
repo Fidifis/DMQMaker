@@ -134,8 +134,7 @@ namespace DMQCore
             );
 
             var textOptions = MakeTextOptions(fontFam, textOrigin, paramz);
-            float maxTextWidth = paramz.ResolutionX - 2 * paramz.TextPaddingX;
-            float maxTextHeight = paramz.ResolutionY - textAreaOriginY - resSignature.Height - paramz.SignatureOffsetY - 50;
+            float maxTextHeight = paramz.ResolutionY - textAreaOriginY - resSignature.Height - paramz.SignatureOffsetY - 100 - 50; //50 is extra to keep some margin from bottom
 
             float scale = 1f;
             FontRectangle textMeasure;
@@ -150,7 +149,7 @@ namespace DMQCore
                 textMeasure = TextMeasurer.MeasureSize(text, textOptions);
                 scale -= 0.05f;
 
-            } while ((textMeasure.Width > maxTextWidth || textMeasure.Height > maxTextHeight) && scale > 0.1f);
+            } while ((textMeasure.Height > maxTextHeight) && scale > 0.09f);
 
             finalImage.Mutate(x =>
             {

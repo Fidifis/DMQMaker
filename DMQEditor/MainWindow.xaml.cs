@@ -225,7 +225,7 @@ namespace DMQEditor
                 Log.Debug("Cannot make image. Nothing uploaded");
                 return;
             }
-            finalImage = Maker.MakeImage(image, dmqText, dmqParams, font);
+            finalImage = Maker.MakeImage(image, dmqText, dmqParams, new FontParam() { FontName = font });
         }
 
 
